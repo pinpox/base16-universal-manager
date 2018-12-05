@@ -28,8 +28,6 @@ func main() {
 			fmt.Printf("%s: %s\n", k, v)
 		}
 		fmt.Println("Found colorschemes: ", len(schemesRepos))
-
-
 	*/
 
 	///////////////////// Start here

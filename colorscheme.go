@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"log"
 )
@@ -57,11 +58,7 @@ func GetBase16Colorscheme(name string) (Base16Colorscheme, error) {
 }
 
 type Base16ColorschemeList struct {
-	Collection []Base16Colorscheme
-}
-
-func (c *Base16ColorschemeList) add(ghf []GitHubFile) {
-
+	colorschemes map[string]string
 }
 
 func (c *Base16ColorschemeList) UpdateFromRemote(url ...string) {
@@ -71,11 +68,11 @@ func (c *Base16ColorschemeList) UpdateFromRemote(url ...string) {
 	if len(url) == 1 {
 		masterRepo = url[0]
 	} else {
-		masterRepo = "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
+		masterRepo = "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
 	}
 
 	//Get all repos from master source
-	var schemeRepos map[string]string
+	schemeRepos := make(map[string]string)
 
 	schemesYAML, err := DownloadFileToStirng(masterRepo)
 	check(err)
@@ -83,9 +80,18 @@ func (c *Base16ColorschemeList) UpdateFromRemote(url ...string) {
 	err = yaml.Unmarshal([]byte(schemesYAML), &schemeRepos)
 	check(err)
 
-	for _, v := range schemeRepos {
-		c.add(findYAMLinRepo(v))
+	fmt.Println("Found colorscheme repos: ", len(schemeRepos))
+
+	for k, v := range schemeRepos {
+		schemeRepos[k] = v
 	}
+
+	c.colorschemes = make(map[string]string)
+
+	// c.colorschemes[k] = v
+
+	fmt.Println("Found colorschemes: ", len(c.colorschemes))
+
 }
 
 func (c *Base16ColorschemeList) Find(input string) (Base16Colorscheme, error) {
