@@ -4,12 +4,8 @@ import (
 	"io/ioutil"
 )
 
-func getTemplate(url string) (string, error) {
-	b16templateName := "i3"
-	template, err := ioutil.ReadFile("./templates/" + b16templateName)
+func GetBase16Template(name string) (string, error) {
+	//TODO get from the internets instead (if possible)
+	template, err := ioutil.ReadFile("./templates/" + name)
 	return string(template), err
-}
-
-func GetB16Template(name string) (string, error) {
-	return nil
 }

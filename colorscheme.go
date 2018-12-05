@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-type B16Colors struct {
+type Base16Colors struct {
 	Name   string `yaml:"scheme"`
 	Author string `yaml:"author"`
 
@@ -27,9 +27,9 @@ type B16Colors struct {
 	Color15 string `yaml:"base0F"`
 }
 
-func (c *B16Colors) getColors(url string) *B16Colors {
+func (c *Base16Colors) getColors(url string) *Base16Colors {
 
-	yamlFile, err := DownloadYAML(url)
+	yamlFile, err := DownloadFileToStirng(url)
 	if err != nil {
 		log.Printf("yamlFile.Get err   #%v ", err)
 	}
@@ -41,6 +41,8 @@ func (c *B16Colors) getColors(url string) *B16Colors {
 	return c
 }
 
-func GetB16Colorscheme(name string) (*B16Colors, error) {
-	return nil
+//GetBase16Colorscheme returns a Base16Colors strunct containing all colors of
+//a given colorscheme
+func GetBase16Colorscheme(name string) (*Base16Colors, error) {
+	return nil, nil
 }
