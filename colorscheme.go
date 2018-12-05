@@ -54,14 +54,22 @@ func GetBase16Colorscheme(name string) (Base16Colorscheme, error) {
 	var base16Colorscheme Base16Colorscheme
 	base16Colorscheme.getColors(colorsURL)
 	return base16Colorscheme, nil
+}
 
+func LoadBase16ColorschemeList() Base16ColorschemeList {
+	colorschemes := LoadStringMap(schemesListPath)
+	return Base16ColorschemeList{colorschemes}
+}
+
+func SaveBase16ColorschemeList(l Base16ColorschemeList) {
+	SaveStringMap(l.colorschemes, schemesListPath)
 }
 
 type Base16ColorschemeList struct {
 	colorschemes map[string]string
 }
 
-func (c *Base16ColorschemeList) UpdateFromRemote(url ...string) {
+func UpdateSchemes(url ...string) {
 
 	//Set the source for templates
 	var masterRepo string
@@ -86,12 +94,26 @@ func (c *Base16ColorschemeList) UpdateFromRemote(url ...string) {
 		schemeRepos[k] = v
 	}
 
-	c.colorschemes = make(map[string]string)
+	colorschemes := make(map[string]string)
 
-	// c.colorschemes[k] = v
+	limit := 4
+	for _, v1 := range schemeRepos {
+		fmt.Println("Getting schemes from: " + v1)
 
-	fmt.Println("Found colorschemes: ", len(c.colorschemes))
+		for _, v2 := range findYAMLinRepo(v1) {
+			colorschemes[v2.Name] = v2.HTMLURL
+		}
 
+		//TODO remove this
+		limit--
+		if limit <= 0 {
+			fmt.Println("Limit reached!")
+			break
+		}
+	}
+
+	fmt.Println("Found colorschemes: ", len(colorschemes))
+	SaveBase16ColorschemeList(Base16ColorschemeList{colorschemes})
 }
 
 func (c *Base16ColorschemeList) Find(input string) (Base16Colorscheme, error) {

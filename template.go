@@ -34,7 +34,7 @@ type Base16TemplateList struct {
 	templates map[string]string
 }
 
-func (c *Base16TemplateList) UpdateFromRemote(url ...string) {
+func UpdateTemplates(url ...string) {
 
 	//Set the source for templates
 	var masterRepo string
@@ -53,13 +53,25 @@ func (c *Base16TemplateList) UpdateFromRemote(url ...string) {
 	err = yaml.Unmarshal([]byte(templatesYAML), &templRepos)
 	check(err)
 
-	c.templates = make(map[string]string)
+	templates := make(map[string]string)
+
 	fmt.Println("Found template repos: ", len(templRepos))
 	for k, v := range templRepos {
 		// fmt.Printf("%s: %s\n", k, v)
-		c.templates[k] = v
+		templates[k] = v
 	}
 
+	SaveBase16TemplateList(Base16TemplateList{templates})
+
+}
+
+func LoadBase16TemplateList() Base16TemplateList {
+	colorschemes := LoadStringMap(templatesListPath)
+	return Base16TemplateList{colorschemes}
+}
+
+func SaveBase16TemplateList(l Base16TemplateList) {
+	SaveStringMap(l.templates, templatesListPath)
 }
 
 func (c *Base16TemplateList) Find(input string) (Base16Template, error) {

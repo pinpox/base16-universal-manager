@@ -3,13 +3,27 @@ package main
 import (
 	"fmt"
 	// "gopkg.in/yaml.v2"
+	"gopkg.in/alecthomas/kingpin.v2"
 	"os"
+
 	"text/template"
 )
 
 var schemesSourceURL = "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
 
+var (
+	updateFlag = kingpin.Flag("update-list", "Update the list of templates and colorschemes").Bool()
+	// /outputFile = kingpin.Flag("output", "Output file name and path").Short('o').Required().String()
+	// identifier = kingpin.Flag("identifier", "Identifier of the file as specified in rules.csv").Short('i').Required().String()
+	schemesListPath   = "./schemeslist.yml"
+	templatesListPath = "./templateslist.yml"
+)
+
 func main() {
+
+	kingpin.Version("0.0.1")
+	kingpin.Parse()
+
 	/*
 		var schemesRepos map[string]string
 		var templates map[string]string
@@ -32,14 +46,19 @@ func main() {
 
 	///////////////////// Start here
 	// TODO Get this two vars from flags
-	userInputThemeName := "atelier-cave-light"
+	userInputThemeName := "metal"
 	userInputTemplateName := "i3"
 
-	var schemeList Base16ColorschemeList
-	var templateList Base16TemplateList
+	schemeList := LoadBase16ColorschemeList()
+	templateList := LoadBase16TemplateList()
 
-	schemeList.UpdateFromRemote()
-	templateList.UpdateFromRemote()
+	if *updateFlag {
+		UpdateSchemes()
+		UpdateTemplates()
+	}
+
+	schemeList = LoadBase16ColorschemeList()
+	templateList = LoadBase16TemplateList()
 
 	templ, err := templateList.Find(userInputTemplateName)
 	check(err)
