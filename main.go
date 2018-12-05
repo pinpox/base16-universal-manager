@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "fmt"
+	"fmt"
 	// "gopkg.in/yaml.v2"
 	"os"
 	"text/template"
@@ -30,10 +30,6 @@ func main() {
 		}
 		fmt.Println("Found colorschemes: ", len(schemesRepos))
 
-		//Get the colors
-		colorsURL := "https://raw.githubusercontent.com/atelierbram/base16-atelier-schemes/master/atelier-cave-light.yaml"
-		var base16Colorscheme B16Colors
-		base16Colorscheme.getColors(colorsURL)
 
 	*/
 
@@ -45,6 +41,7 @@ func main() {
 	//Get a stuct containing all 16 colors
 	Base16ThemeColors, err := GetBase16Colorscheme(userInputThemeName)
 	check(err)
+	fmt.Println(Base16ThemeColors)
 
 	//Get the template as string
 	Base16Template, err := GetBase16Template(userInputTemplateName)
@@ -62,4 +59,5 @@ func check(e error) {
 	if e != nil {
 		panic(e)
 	}
+
 }

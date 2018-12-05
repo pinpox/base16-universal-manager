@@ -43,6 +43,11 @@ func (c *Base16Colors) getColors(url string) *Base16Colors {
 
 //GetBase16Colorscheme returns a Base16Colors strunct containing all colors of
 //a given colorscheme
-func GetBase16Colorscheme(name string) (*Base16Colors, error) {
-	return nil, nil
+func GetBase16Colorscheme(name string) (Base16Colors, error) {
+	//Get the colors
+	colorsURL := "https://raw.githubusercontent.com/atelierbram/base16-atelier-schemes/master/atelier-cave-light.yaml"
+	var base16Colorscheme Base16Colors
+	base16Colorscheme.getColors(colorsURL)
+	return base16Colorscheme, nil
+
 }

@@ -1,3 +1,4 @@
+=========== TEMPLATE START =============
 Color 00 is: {{ .Color00}}
 Color 01 is: {{ .Color01}}
 Color 02 is: {{ .Color02}}
@@ -14,3 +15,5 @@ Color 12 is: {{ .Color12}}
 Color 13 is: {{ .Color13}}
 Color 14 is: {{ .Color14}}
 Color 15 is: {{ .Color15}}
+
+=========== TEMPLATE END =============
