@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-type Base16Colors struct {
+type Base16Colorscheme struct {
 	Name   string `yaml:"scheme"`
 	Author string `yaml:"author"`
 
@@ -27,7 +27,11 @@ type Base16Colors struct {
 	Color15 string `yaml:"base0F"`
 }
 
-func (c *Base16Colors) getColors(url string) *Base16Colors {
+func NewBase16Colorscheme(yaml string) Base16Colorscheme {
+	return Base16Colorscheme{}
+}
+
+func (c *Base16Colorscheme) getColors(url string) *Base16Colorscheme {
 
 	yamlFile, err := DownloadFileToStirng(url)
 	if err != nil {
@@ -43,11 +47,47 @@ func (c *Base16Colors) getColors(url string) *Base16Colors {
 
 //GetBase16Colorscheme returns a Base16Colors strunct containing all colors of
 //a given colorscheme
-func GetBase16Colorscheme(name string) (Base16Colors, error) {
+func GetBase16Colorscheme(name string) (Base16Colorscheme, error) {
 	//Get the colors
 	colorsURL := "https://raw.githubusercontent.com/atelierbram/base16-atelier-schemes/master/atelier-cave-light.yaml"
-	var base16Colorscheme Base16Colors
+	var base16Colorscheme Base16Colorscheme
 	base16Colorscheme.getColors(colorsURL)
 	return base16Colorscheme, nil
 
+}
+
+type Base16ColorschemeList struct {
+	Collection []Base16Colorscheme
+}
+
+func (c *Base16ColorschemeList) add(ghf []GitHubFile) {
+
+}
+
+func (c *Base16ColorschemeList) UpdateFromRemote(url ...string) {
+
+	//Set the source for templates
+	var masterRepo string
+	if len(url) == 1 {
+		masterRepo = url[0]
+	} else {
+		masterRepo = "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
+	}
+
+	//Get all repos from master source
+	var schemeRepos map[string]string
+
+	schemesYAML, err := DownloadFileToStirng(masterRepo)
+	check(err)
+
+	err = yaml.Unmarshal([]byte(schemesYAML), &schemeRepos)
+	check(err)
+
+	for _, v := range schemeRepos {
+		c.add(findYAMLinRepo(v))
+	}
+}
+
+func (c *Base16ColorschemeList) Find(input string) (Base16Colorscheme, error) {
+	return Base16Colorscheme{}, nil
 }

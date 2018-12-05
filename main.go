@@ -7,7 +7,6 @@ import (
 	"text/template"
 )
 
-var templatesSourceURL = "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
 var schemesSourceURL = "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
 
 func main() {
@@ -38,20 +37,40 @@ func main() {
 	userInputThemeName := "atelier-cave-light"
 	userInputTemplateName := "i3"
 
-	//Get a stuct containing all 16 colors
-	Base16ThemeColors, err := GetBase16Colorscheme(userInputThemeName)
-	check(err)
-	fmt.Println(Base16ThemeColors)
+	var schemeList Base16ColorschemeList
+	var templateList Base16TemplateList
 
-	//Get the template as string
-	Base16Template, err := GetBase16Template(userInputTemplateName)
+	schemeList.UpdateFromRemote()
+	templateList.UpdateFromRemote()
+
+	templ, err := templateList.Find(userInputTemplateName)
 	check(err)
+
+	scheme, err := schemeList.Find(userInputThemeName)
+	check(err)
+
+	Render(templ, scheme)
+
+}
+
+func Render(templ Base16Template, scheme Base16Colorscheme) {
+
+	////Get a stuct containing all 16 colors
+	//Base16ThemeColors, err := GetBase16Colorscheme(userInputThemeName)
+	//check(err)
+	//fmt.Println("Found colorscheme: " + Base16ThemeColors.Name)
+	//fmt.Println(Base16ThemeColors) //TODO remove this
+
+	////Get the template as string
+	//Base16Template, err := GetBase16Template(userInputTemplateName)
+	//check(err)
+	fmt.Println("Rendering template: " + templ.Name + " with colorscheme: " + scheme.Name)
 
 	//Render the template to Stdout
 	// TODO use mustache themes instead
-	t, err := template.New(userInputTemplateName).Parse(Base16Template)
+	t, err := template.New(templ.Name).Parse(templ.Template)
 	check(err)
-	err = t.Execute(os.Stdout, Base16ThemeColors)
+	err = t.Execute(os.Stdout, scheme)
 	check(err)
 }
 
