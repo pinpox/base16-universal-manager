@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"log"
 	"os"
 )
 
@@ -32,7 +31,7 @@ type Base16Colorscheme struct {
 
 func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorscheme, error) {
 
-	path := "./schemes/" + name
+	path := schemesCachePath + name
 
 	// Create local schemes file, if not present
 	if _, err := os.Stat(path); os.IsNotExist(err) {
@@ -64,40 +63,30 @@ func NewBase16Colorscheme(yaml string) Base16Colorscheme {
 func (c *Base16Colorscheme) getColors(yamlFile string) *Base16Colorscheme {
 
 	err := yaml.Unmarshal([]byte(yamlFile), c)
-	if err != nil {
-		log.Fatalf("Unmarshal: %v", err)
-	}
+	check(err)
 
 	return c
 }
 
 func LoadBase16ColorschemeList() Base16ColorschemeList {
-	colorschemes := LoadStringMap(schemesListPath)
+	colorschemes := LoadStringMap(schemesListFile)
 	return Base16ColorschemeList{colorschemes}
 }
 
 func SaveBase16ColorschemeList(l Base16ColorschemeList) {
-	SaveStringMap(l.colorschemes, schemesListPath)
+	SaveStringMap(l.colorschemes, schemesListFile)
 }
 
 type Base16ColorschemeList struct {
 	colorschemes map[string]string
 }
 
-func UpdateSchemes(url ...string) {
-
-	//Set the source for templates
-	var masterRepo string
-	if len(url) == 1 {
-		masterRepo = url[0]
-	} else {
-		masterRepo = "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
-	}
+func UpdateSchemes() {
 
 	//Get all repos from master source
 	schemeRepos := make(map[string]string)
 
-	schemesYAML, err := DownloadFileToStirng(masterRepo)
+	schemesYAML, err := DownloadFileToStirng(schemesSourceURL)
 	check(err)
 
 	err = yaml.Unmarshal([]byte(schemesYAML), &schemeRepos)

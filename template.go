@@ -16,14 +16,9 @@ type Base16Template struct {
 	Name string
 }
 
-func (*Base16Template) Render() (string, error) {
-
-	return "", nil
-}
-
 func (l *Base16TemplateList) GetBase16Template(name string) (Base16Template, error) {
 
-	path := "./templates/" + name
+	path := templatesCachePath + name
 
 	// Create local template file, if not present
 	if _, err := os.Stat(path); os.IsNotExist(err) {
@@ -52,20 +47,12 @@ type Base16TemplateList struct {
 	templates map[string]string
 }
 
-func UpdateTemplates(url ...string) {
-
-	//Set the source for templates
-	var masterRepo string
-	if len(url) == 1 {
-		masterRepo = url[0]
-	} else {
-		masterRepo = "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
-	}
+func UpdateTemplates() {
 
 	//Get all repos from master source
 	var templRepos map[string]string
 
-	templatesYAML, err := DownloadFileToStirng(masterRepo)
+	templatesYAML, err := DownloadFileToStirng(templatesSourceURL)
 	check(err)
 
 	err = yaml.Unmarshal([]byte(templatesYAML), &templRepos)
@@ -83,16 +70,15 @@ func UpdateTemplates(url ...string) {
 }
 
 func LoadBase16TemplateList() Base16TemplateList {
-	colorschemes := LoadStringMap(templatesListPath)
+	colorschemes := LoadStringMap(templatesListFile)
 	return Base16TemplateList{colorschemes}
 }
 
 func SaveBase16TemplateList(l Base16TemplateList) {
-	SaveStringMap(l.templates, templatesListPath)
+	SaveStringMap(l.templates, templatesListFile)
 }
 
 func (c *Base16TemplateList) Find(input string) (Base16Template, error) {
 	templateName := FindMatchInMap(c.templates, input)
 	return c.GetBase16Template(templateName)
-
 }

@@ -9,15 +9,26 @@ import (
 	"text/template"
 )
 
-var schemesSourceURL = "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
+//Master sources
+var (
+	schemesSourceURL   = "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
+	templatesSourceURL = "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
+)
 
+//Paths
+var (
+	schemesCachePath   = "./cache/colorschemes/"
+	templatesCachePath = "./cache/templates/"
+	schemesListFile    = schemesCachePath + "schemeslist.yml"
+	templatesListFile  = templatesCachePath + "templateslist.yml"
+)
+
+//Flags
 var (
 	updateFlag         = kingpin.Flag("update-list", "Update the list of templates and colorschemes").Bool()
 	clearListFlag      = kingpin.Flag("clear-list", "Delete local master list caches").Bool()
 	clearSchemesFlag   = kingpin.Flag("clear-templates", "Delete local scheme caches").Bool()
 	clearTemplatesFlag = kingpin.Flag("clear-schemes", "Delete local template caches").Bool()
-	schemesListPath    = "./schemeslist.yml"
-	templatesListPath  = "./templateslist.yml"
 )
 
 func main() {
