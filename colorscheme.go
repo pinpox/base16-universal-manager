@@ -43,27 +43,9 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 
 		parts := strings.Split(l.colorschemes[name], "/")
 
-		for k, v := range parts {
-			fmt.Println(k, " ", v)
-
-		}
-		/*
-			0   https:
-			1
-			2   github.com
-			3   ada-lovecraft
-			4   base16-nord-scheme
-			5   blob
-			6   master
-			7   nord.yaml
-		*/
-
 		yamlURL := "https://raw.githubusercontent.com/" + parts[3] + "/" + parts[4] + "/master/" + parts[7]
 
 		fmt.Println("downloading theme from: ", yamlURL)
-
-		// https://github.com/ada-lovecraft/base16-nord-scheme/blob/master/nord.yaml
-		// https://raw.githubusercontent.com/ada-lovecraft/base16-nord-scheme/master/nord.yaml
 
 		schemeData, err := DownloadFileToStirng(yamlURL)
 		check(err)
@@ -144,6 +126,11 @@ func (c *Base16ColorschemeList) Find(input string) Base16Colorscheme {
 	if _, err := os.Stat(schemesListFile); os.IsNotExist(err) {
 		check(err)
 		fmt.Println("Colorschemes list not found, pulling new one...")
+		c.UpdateSchemes()
+	}
+
+	if len(c.colorschemes) == 0 {
+		fmt.Println("No templates in list, pulling new one... ")
 		c.UpdateSchemes()
 	}
 
