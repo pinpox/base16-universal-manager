@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/hoisie/mustache"
 	// "gopkg.in/yaml.v2"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"os"
@@ -66,29 +67,26 @@ func main() {
 	scheme := schemeList.Find(userInputThemeName)
 	fmt.Println("Selected scheme: ", scheme.Name)
 
-	Render(templ, scheme)
+	Base16Render(templ, scheme)
 
 }
 
-func Render(templ Base16Template, scheme Base16Colorscheme) {
+func Base16Render(templ Base16Template, scheme Base16Colorscheme) {
 
-	////Get a stuct containing all 16 colors
-	//Base16ThemeColors, err := GetBase16Colorscheme(userInputThemeName)
-	//check(err)
-	//fmt.Println("Found colorscheme: " + Base16ThemeColors.Name)
-	//fmt.Println(Base16ThemeColors) //TODO remove this
-
-	////Get the template as string
-	//Base16Template, err := GetBase16Template(userInputTemplateName)
-	//check(err)
 	fmt.Println("Rendering template: "+templ.Name+" with colorscheme: "+scheme.Name+" Files: ", len(templ.Files))
 
-	//Render the template to Stdout
-	// TODO use mustache themes instead
-	// t, err := template.New(templ.Name).Parse(templ.Template)
-	// check(err)
-	// err = t.Execute(os.Stdout, scheme)
-	// check(err)
+	// basePath := "https://raw.githubusercontent.com/jjjordan/base16-joe/master/templates/config.yaml"
+
+	for k, v := range templ.Files {
+		//get the template file
+		templFileData, err := DownloadFileToStirng(templ.RawBaseURL + "templates/" + k + ".mustache")
+		check(err)
+		//render
+		// := RenderMustache(templFileData, scheme)
+		renderedFile := mustache.Render(templFileData, scheme)
+		//save or print
+		fmt.Println("Rendered:\n==========", renderedFile, "\n========\n", "wil save to: ", v.Output, v.Extension)
+	}
 }
 
 func check(e error) {

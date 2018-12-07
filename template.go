@@ -20,35 +20,30 @@ type Base16Template struct {
 
 	//Name (of the application)
 	Name string
+
+	RepoURL string
+
+	RawBaseURL string
 }
 
 func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
 
+	// yamlURL := "https://raw.githubusercontent.com/" + parts[3] + "/" + parts[4] + "/master/templates/config.yaml"
 	if len(name) == 0 {
 		panic("Template name was empty")
 	}
+
+	var newTemplate Base16Template
+	newTemplate.RepoURL = l.templates[name]
+	parts := strings.Split(l.templates[name], "/")
+	newTemplate.RawBaseURL = "https://raw.githubusercontent.com/" + parts[3] + "/" + parts[4] + "/master/"
+	newTemplate.Name = name
 
 	path := templatesCachePath + name
 
 	// Create local template file, if not present
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-
-		parts := strings.Split(l.templates[name], "/")
-
-		for k, v := range parts {
-			fmt.Println(k, " ", v)
-
-		}
-
-		/*
-		   0   https:
-		   1
-		   2   github.com
-		   3   khamer
-		   4   base16-i3
-		*/
-		yamlURL := "https://raw.githubusercontent.com/" + parts[3] + "/" + parts[4] + "/master/templates/config.yaml"
-		templateData, err := DownloadFileToStirng(yamlURL)
+		templateData, err := DownloadFileToStirng(newTemplate.RawBaseURL + "templates/config.yaml")
 		check(err)
 		saveFile, err := os.Create(path)
 		defer saveFile.Close()
@@ -59,24 +54,14 @@ func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
 	template, err := ioutil.ReadFile(path)
 	check(err)
 
-	return NewBase16TemplateFromYAML(string(template), name)
-}
-
-func NewBase16TemplateFromYAML(yamlData string, name string) Base16Template {
-
 	//TODO cache actual templates
 	var files map[string]Base16TemplateFile
 
-	err := yaml.Unmarshal([]byte(yamlData), &files)
+	err = yaml.Unmarshal(template, &files)
+	check(err)
 
-	if err != nil {
-		panic(err)
-	}
-
-	return Base16Template{
-		Name:  name,
-		Files: files,
-	}
+	newTemplate.Files = files
+	return newTemplate
 }
 
 type Base16TemplateList struct {

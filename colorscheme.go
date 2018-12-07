@@ -28,6 +28,10 @@ type Base16Colorscheme struct {
 	Color13 string `yaml:"base0D"`
 	Color14 string `yaml:"base0E"`
 	Color15 string `yaml:"base0F"`
+
+	RepoURL string
+
+	RawBaseURL string
 }
 
 func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorscheme, error) {
