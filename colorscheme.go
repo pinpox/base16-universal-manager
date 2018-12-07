@@ -5,6 +5,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 type Base16Colorscheme struct {
@@ -39,7 +40,32 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 
 	// Create local schemes file, if not present
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		schemeData, err := DownloadFileToStirng(l.colorschemes[name])
+
+		parts := strings.Split(l.colorschemes[name], "/")
+
+		for k, v := range parts {
+			fmt.Println(k, " ", v)
+
+		}
+		/*
+			0   https:
+			1
+			2   github.com
+			3   ada-lovecraft
+			4   base16-nord-scheme
+			5   blob
+			6   master
+			7   nord.yaml
+		*/
+
+		yamlURL := "https://raw.githubusercontent.com/" + parts[3] + "/" + parts[4] + "/master/" + parts[7]
+
+		fmt.Println("downloading theme from: ", yamlURL)
+
+		// https://github.com/ada-lovecraft/base16-nord-scheme/blob/master/nord.yaml
+		// https://raw.githubusercontent.com/ada-lovecraft/base16-nord-scheme/master/nord.yaml
+
+		schemeData, err := DownloadFileToStirng(yamlURL)
 		check(err)
 		saveFile, err := os.Create(path)
 		defer saveFile.Close()
@@ -55,21 +81,12 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 
 }
 
-func NewBase16Colorscheme(yaml string) Base16Colorscheme {
+func NewBase16Colorscheme(yamlData string) Base16Colorscheme {
+	var scheme Base16Colorscheme
 
-	//Get the colors
-	// colorsURL := "https://raw.githubusercontent.com/atelierbram/base16-atelier-schemes/master/atelier-cave-light.yaml"
-	var base16Colorscheme Base16Colorscheme
-	base16Colorscheme.getColors(yaml)
-	return base16Colorscheme
-}
-
-func (c *Base16Colorscheme) getColors(yamlFile string) *Base16Colorscheme {
-
-	err := yaml.Unmarshal([]byte(yamlFile), c)
+	err := yaml.Unmarshal([]byte(yamlData), &scheme)
 	check(err)
-
-	return c
+	return scheme
 }
 
 func LoadBase16ColorschemeList() Base16ColorschemeList {

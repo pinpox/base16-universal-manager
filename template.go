@@ -7,19 +7,15 @@ import (
 	"os"
 )
 
-type Base16ConfigItem struct {
+type Base16TemplateFile struct {
 	Extension string `yaml:"extension"`
 	Output    string `yaml:"output"`
-}
-
-type Base16Config struct {
-	Items []Base16ConfigItem
 }
 
 type Base16Template struct {
 
 	//The actual template
-	Config string
+	Files map[string]Base16TemplateFile
 
 	//Name (of the application)
 	Name string
@@ -36,7 +32,7 @@ func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
 	// Create local template file, if not present
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		//TODO error here in URL!!!
-		templateData, err := DownloadFileToStirng(l.templates[name])
+		templateData, err := DownloadFileToStirng(l.templates[name] + "/templates/config.yaml")
 		check(err)
 		saveFile, err := os.Create(path)
 		defer saveFile.Close()
@@ -47,14 +43,23 @@ func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
 	template, err := ioutil.ReadFile(path)
 	check(err)
 
-	return NewBase16TemplateFromYAML(string(template))
+	return NewBase16TemplateFromYAML(string(template), name)
 }
 
-func NewBase16TemplateFromYAML(yamlData string) Base16Template {
-	//TODO
+func NewBase16TemplateFromYAML(yamlData string, name string) Base16Template {
+
+	//TODO cache actual templates
+	var files map[string]Base16TemplateFile
+
+	err := yaml.Unmarshal([]byte(yamlData), &files)
+
+	if err != nil {
+		panic(err)
+	}
+
 	return Base16Template{
-		Template: yamlData,
-		Name:     "Test",
+		Name:  name,
+		Files: files,
 	}
 }
 

@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"text/template"
+	_ "text/template"
 )
 
 //Master sources
@@ -105,10 +105,10 @@ func Render(templ Base16Template, scheme Base16Colorscheme) {
 
 	//Render the template to Stdout
 	// TODO use mustache themes instead
-	t, err := template.New(templ.Name).Parse(templ.Template)
-	check(err)
-	err = t.Execute(os.Stdout, scheme)
-	check(err)
+	// t, err := template.New(templ.Name).Parse(templ.Template)
+	// check(err)
+	// err = t.Execute(os.Stdout, scheme)
+	// check(err)
 }
 
 func check(e error) {
