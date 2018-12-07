@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+
 	"fmt"
+	"github.com/agnivade/levenshtein"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"net/http"
@@ -101,4 +103,19 @@ func SaveStringMap(data map[string]string, path string) {
 	saveFile.Write(yamlData)
 	saveFile.Close()
 	fmt.Println("wrote to: ", saveFile.Name())
+}
+
+func FindMatchInMap(choices map[string]string, input string) string {
+
+	var match string
+	distance := 1000
+
+	for k := range choices {
+		tempDistance := levenshtein.ComputeDistance(input, k)
+		if tempDistance < distance {
+			match = k
+			distance = tempDistance
+		}
+	}
+	return match
 }

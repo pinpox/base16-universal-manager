@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"log"
+	"os"
 )
 
 type Base16Colorscheme struct {
@@ -28,32 +30,45 @@ type Base16Colorscheme struct {
 	Color15 string `yaml:"base0F"`
 }
 
-func NewBase16Colorscheme(yaml string) Base16Colorscheme {
-	return Base16Colorscheme{}
+func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorscheme, error) {
+
+	path := "./schemes/" + name
+
+	// Create local schemes file, if not present
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		schemeData, err := DownloadFileToStirng(l.colorschemes[name])
+		check(err)
+		saveFile, err := os.Create(path)
+		defer saveFile.Close()
+		check(err)
+		saveFile.Write([]byte(schemeData))
+		saveFile.Close()
+	}
+
+	colorscheme, err := ioutil.ReadFile(path)
+	check(err)
+
+	return NewBase16Colorscheme(string(colorscheme)), err
+
 }
 
-func (c *Base16Colorscheme) getColors(url string) *Base16Colorscheme {
+func NewBase16Colorscheme(yaml string) Base16Colorscheme {
 
-	yamlFile, err := DownloadFileToStirng(url)
-	if err != nil {
-		log.Printf("yamlFile.Get err   #%v ", err)
-	}
-	err = yaml.Unmarshal([]byte(yamlFile), c)
+	//Get the colors
+	// colorsURL := "https://raw.githubusercontent.com/atelierbram/base16-atelier-schemes/master/atelier-cave-light.yaml"
+	var base16Colorscheme Base16Colorscheme
+	base16Colorscheme.getColors(yaml)
+	return base16Colorscheme
+}
+
+func (c *Base16Colorscheme) getColors(yamlFile string) *Base16Colorscheme {
+
+	err := yaml.Unmarshal([]byte(yamlFile), c)
 	if err != nil {
 		log.Fatalf("Unmarshal: %v", err)
 	}
 
 	return c
-}
-
-//GetBase16Colorscheme returns a Base16Colors strunct containing all colors of
-//a given colorscheme
-func GetBase16Colorscheme(name string) (Base16Colorscheme, error) {
-	//Get the colors
-	colorsURL := "https://raw.githubusercontent.com/atelierbram/base16-atelier-schemes/master/atelier-cave-light.yaml"
-	var base16Colorscheme Base16Colorscheme
-	base16Colorscheme.getColors(colorsURL)
-	return base16Colorscheme, nil
 }
 
 func LoadBase16ColorschemeList() Base16ColorschemeList {
@@ -117,5 +132,6 @@ func UpdateSchemes(url ...string) {
 }
 
 func (c *Base16ColorschemeList) Find(input string) (Base16Colorscheme, error) {
-	return Base16Colorscheme{}, nil
+	colorschemeName := FindMatchInMap(c.colorschemes, input)
+	return c.GetBase16Colorscheme(colorschemeName)
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"os"
 )
 
 type Base16Template struct {
@@ -20,14 +21,31 @@ func (*Base16Template) Render() (string, error) {
 	return "", nil
 }
 
-func GetBase16Template(name string) (Base16Template, error) {
-	//TODO get from the internets instead (if possible)
-	template, err := ioutil.ReadFile("./templates/" + name)
+func (l *Base16TemplateList) GetBase16Template(name string) (Base16Template, error) {
 
+	path := "./templates/" + name
+
+	// Create local template file, if not present
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		templateData, err := DownloadFileToStirng(l.templates[name])
+		check(err)
+		saveFile, err := os.Create(path)
+		defer saveFile.Close()
+		saveFile.Write([]byte(templateData))
+		saveFile.Close()
+	}
+
+	template, err := ioutil.ReadFile(path)
+
+	return NewBase16TemplateFromYAML(string(template)), err
+}
+
+func NewBase16TemplateFromYAML(yamlData string) Base16Template {
+	//TODO
 	return Base16Template{
-		Template: string(template),
+		Template: yamlData,
 		Name:     "Test",
-	}, err
+	}
 }
 
 type Base16TemplateList struct {
@@ -57,7 +75,6 @@ func UpdateTemplates(url ...string) {
 
 	fmt.Println("Found template repos: ", len(templRepos))
 	for k, v := range templRepos {
-		// fmt.Printf("%s: %s\n", k, v)
 		templates[k] = v
 	}
 
@@ -75,5 +92,7 @@ func SaveBase16TemplateList(l Base16TemplateList) {
 }
 
 func (c *Base16TemplateList) Find(input string) (Base16Template, error) {
-	return Base16Template{}, nil
+	templateName := FindMatchInMap(c.templates, input)
+	return c.GetBase16Template(templateName)
+
 }

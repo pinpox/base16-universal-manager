@@ -12,11 +12,12 @@ import (
 var schemesSourceURL = "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
 
 var (
-	updateFlag = kingpin.Flag("update-list", "Update the list of templates and colorschemes").Bool()
-	// /outputFile = kingpin.Flag("output", "Output file name and path").Short('o').Required().String()
-	// identifier = kingpin.Flag("identifier", "Identifier of the file as specified in rules.csv").Short('i').Required().String()
-	schemesListPath   = "./schemeslist.yml"
-	templatesListPath = "./templateslist.yml"
+	updateFlag         = kingpin.Flag("update-list", "Update the list of templates and colorschemes").Bool()
+	clearListFlag      = kingpin.Flag("clear-list", "Delete local master list caches").Bool()
+	clearSchemesFlag   = kingpin.Flag("clear-templates", "Delete local scheme caches").Bool()
+	clearTemplatesFlag = kingpin.Flag("clear-schemes", "Delete local template caches").Bool()
+	schemesListPath    = "./schemeslist.yml"
+	templatesListPath  = "./templateslist.yml"
 )
 
 func main() {
@@ -62,9 +63,11 @@ func main() {
 
 	templ, err := templateList.Find(userInputTemplateName)
 	check(err)
+	fmt.Println("Selected template: ", templ.Name)
 
 	scheme, err := schemeList.Find(userInputThemeName)
 	check(err)
+	fmt.Println("Selected scheme: ", scheme.Name)
 
 	Render(templ, scheme)
 
