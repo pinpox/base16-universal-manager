@@ -83,9 +83,11 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme) {
 		check(err)
 		//render
 		// := RenderMustache(templFileData, scheme)
-		renderedFile := mustache.Render(templFileData, scheme)
+		renderedFile := mustache.Render(templFileData, scheme.MustacheContext())
 		//save or print
-		fmt.Println("Rendered:\n==========", renderedFile, "\n========\n", "wil save to: ", v.Output, v.Extension)
+
+		fmt.Println("Rendered:\n==========", renderedFile, "\n========\n", "wil save to: ", v.Output+v.Extension)
+
 	}
 }
 

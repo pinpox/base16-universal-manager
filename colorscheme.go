@@ -5,6 +5,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -32,6 +33,55 @@ type Base16Colorscheme struct {
 	RepoURL string
 
 	RawBaseURL string
+}
+
+func (s Base16Colorscheme) MustacheContext() map[string]interface{} {
+	var bases = []string{
+		"00", "01", "02", "03", "04", "05", "06", "07",
+		"08", "09", "0A", "0B", "0C", "0D", "0E", "0F",
+	}
+	slug := "base16-test-slug"
+	ret := map[string]interface{}{
+		"scheme-name":   s.Name,
+		"scheme-author": s.Author,
+		//TODO correct this slug
+		"scheme-slug": slug,
+
+		"scheme-slug-underscored": strings.Replace(slug, "-", "_", -1),
+	}
+
+	for _, base := range bases {
+		baseKey := "base" + base
+
+		//TODO
+		rVal := "33"
+		gVal := "ff"
+		bVal := "00"
+
+		rValf, err := strconv.ParseUint(rVal, 16, 32)
+		check(err)
+		gValf, err := strconv.ParseUint(gVal, 16, 32)
+		check(err)
+		bValf, err := strconv.ParseUint(bVal, 16, 32)
+		check(err)
+
+		ret[baseKey+"-hex"] = rVal + gVal + bVal
+
+		ret[baseKey+"-hex-r"] = rVal
+		ret[baseKey+"-hex-g"] = gVal
+		ret[baseKey+"-hex-b"] = bVal
+
+		ret[baseKey+"-rgb-r"] = rValf
+		ret[baseKey+"-rgb-g"] = gValf
+		ret[baseKey+"-rgb-b"] = bValf
+
+		ret[baseKey+"-dec-r"] = rValf / 255
+		ret[baseKey+"-dec-g"] = gValf / 255
+		ret[baseKey+"-dec-b"] = bValf / 255
+
+	}
+
+	return ret
 }
 
 func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorscheme, error) {
