@@ -16,7 +16,11 @@ type Base16Template struct {
 	Name string
 }
 
-func (l *Base16TemplateList) GetBase16Template(name string) (Base16Template, error) {
+func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
+
+	if len(name) == 0 {
+		panic("Template name was empty")
+	}
 
 	path := templatesCachePath + name
 
@@ -31,8 +35,9 @@ func (l *Base16TemplateList) GetBase16Template(name string) (Base16Template, err
 	}
 
 	template, err := ioutil.ReadFile(path)
+	check(err)
 
-	return NewBase16TemplateFromYAML(string(template)), err
+	return NewBase16TemplateFromYAML(string(template))
 }
 
 func NewBase16TemplateFromYAML(yamlData string) Base16Template {
@@ -78,7 +83,13 @@ func SaveBase16TemplateList(l Base16TemplateList) {
 	SaveStringMap(l.templates, templatesListFile)
 }
 
-func (c *Base16TemplateList) Find(input string) (Base16Template, error) {
+func (c *Base16TemplateList) Find(input string) Base16Template {
+
+	if _, err := os.Stat(templatesListFile); os.IsNotExist(err) {
+		check(err)
+		fmt.Println("Templates list not found, pulling new one...")
+		UpdateTemplates()
+	}
 	templateName := FindMatchInMap(c.templates, input)
 	return c.GetBase16Template(templateName)
 }

@@ -5,6 +5,7 @@ import (
 	// "gopkg.in/yaml.v2"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"os"
+	"path/filepath"
 
 	"text/template"
 )
@@ -17,8 +18,8 @@ var (
 
 //Paths
 var (
-	schemesCachePath   = "./cache/colorschemes/"
-	templatesCachePath = "./cache/templates/"
+	schemesCachePath   = "cache/colorschemes/"
+	templatesCachePath = "cache/templates/"
 	schemesListFile    = schemesCachePath + "schemeslist.yml"
 	templatesListFile  = templatesCachePath + "templateslist.yml"
 )
@@ -36,7 +37,14 @@ func main() {
 	kingpin.Version("0.0.1")
 	kingpin.Parse()
 
+	p1 := filepath.Join(".", schemesCachePath)
+	os.MkdirAll(p1, os.ModePerm)
+
+	p2 := filepath.Join(".", templatesCachePath)
+	os.MkdirAll(p2, os.ModePerm)
 	/*
+
+
 		var schemesRepos map[string]string
 		var templates map[string]string
 
@@ -72,12 +80,10 @@ func main() {
 	schemeList = LoadBase16ColorschemeList()
 	templateList = LoadBase16TemplateList()
 
-	templ, err := templateList.Find(userInputTemplateName)
-	check(err)
+	templ := templateList.Find(userInputTemplateName)
 	fmt.Println("Selected template: ", templ.Name)
 
-	scheme, err := schemeList.Find(userInputThemeName)
-	check(err)
+	scheme := schemeList.Find(userInputThemeName)
 	fmt.Println("Selected scheme: ", scheme.Name)
 
 	Render(templ, scheme)

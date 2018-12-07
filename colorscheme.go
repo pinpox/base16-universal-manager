@@ -31,6 +31,10 @@ type Base16Colorscheme struct {
 
 func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorscheme, error) {
 
+	if len(name) == 0 {
+		panic("Colorscheme name was empty")
+	}
+
 	path := schemesCachePath + name
 
 	// Create local schemes file, if not present
@@ -120,7 +124,16 @@ func UpdateSchemes() {
 	SaveBase16ColorschemeList(Base16ColorschemeList{colorschemes})
 }
 
-func (c *Base16ColorschemeList) Find(input string) (Base16Colorscheme, error) {
+func (c *Base16ColorschemeList) Find(input string) Base16Colorscheme {
+
+	if _, err := os.Stat(schemesListFile); os.IsNotExist(err) {
+		check(err)
+		fmt.Println("Colorschemes list not found, pulling new one...")
+		UpdateSchemes()
+	}
+
 	colorschemeName := FindMatchInMap(c.colorschemes, input)
-	return c.GetBase16Colorscheme(colorschemeName)
+	scheme, err := c.GetBase16Colorscheme(colorschemeName)
+	check(err)
+	return scheme
 }
