@@ -5,6 +5,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 type Base16TemplateFile struct {
@@ -31,8 +32,23 @@ func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
 
 	// Create local template file, if not present
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		//TODO error here in URL!!!
-		templateData, err := DownloadFileToStirng(l.templates[name] + "/templates/config.yaml")
+
+		parts := strings.Split(l.templates[name], "/")
+
+		for k, v := range parts {
+			fmt.Println(k, " ", v)
+
+		}
+
+		/*
+		   0   https:
+		   1
+		   2   github.com
+		   3   khamer
+		   4   base16-i3
+		*/
+		yamlURL := "https://raw.githubusercontent.com/" + parts[3] + "/" + parts[4] + "/master/templates/config.yaml"
+		templateData, err := DownloadFileToStirng(yamlURL)
 		check(err)
 		saveFile, err := os.Create(path)
 		defer saveFile.Close()

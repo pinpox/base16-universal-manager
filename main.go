@@ -34,37 +34,16 @@ var (
 
 func main() {
 
+	//Pase Flags
 	kingpin.Version("0.0.1")
 	kingpin.Parse()
 
+	//Create cache paths, if missing
 	p1 := filepath.Join(".", schemesCachePath)
 	os.MkdirAll(p1, os.ModePerm)
-
 	p2 := filepath.Join(".", templatesCachePath)
 	os.MkdirAll(p2, os.ModePerm)
-	/*
 
-
-		var schemesRepos map[string]string
-		var templates map[string]string
-
-		schemesYAML, err := DownloadFileToStirng(schemesSourceURL)
-		check(err)
-		templatesYAML, err := DownloadFileToStirng(templatesSourceURL)
-		check(err)
-		err = yaml.Unmarshal([]byte(schemesYAML), &schemesRepos)
-		check(err)
-		err = yaml.Unmarshal([]byte(templatesYAML), &templates)
-		check(err)
-
-		fmt.Println("Found templates: ", len(templates))
-		for k, v := range templates {
-			fmt.Printf("%s: %s\n", k, v)
-		}
-		fmt.Println("Found colorschemes: ", len(schemesRepos))
-	*/
-
-	///////////////////// Start here
 	// TODO Get this two vars from flags
 	userInputThemeName := "metal"
 	userInputTemplateName := "i3"
@@ -77,6 +56,7 @@ func main() {
 		templateList.UpdateTemplates()
 	}
 
+	//TODO delete caches, if user wants to
 	schemeList = LoadBase16ColorschemeList()
 	templateList = LoadBase16TemplateList()
 
@@ -101,7 +81,7 @@ func Render(templ Base16Template, scheme Base16Colorscheme) {
 	////Get the template as string
 	//Base16Template, err := GetBase16Template(userInputTemplateName)
 	//check(err)
-	fmt.Println("Rendering template: " + templ.Name + " with colorscheme: " + scheme.Name)
+	fmt.Println("Rendering template: "+templ.Name+" with colorscheme: "+scheme.Name+" Files: ", len(templ.Files))
 
 	//Render the template to Stdout
 	// TODO use mustache themes instead

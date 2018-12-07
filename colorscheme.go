@@ -101,7 +101,6 @@ func (l *Base16ColorschemeList) UpdateSchemes() {
 		schemeRepos[k] = v
 	}
 
-	limit := 4
 	for _, v1 := range schemeRepos {
 		fmt.Println("Getting schemes from: " + v1)
 
@@ -109,12 +108,6 @@ func (l *Base16ColorschemeList) UpdateSchemes() {
 			l.colorschemes[v2.Name] = v2.HTMLURL
 		}
 
-		//TODO remove this
-		limit--
-		if limit <= 0 {
-			fmt.Println("Limit reached!")
-			break
-		}
 	}
 
 	fmt.Println("Found colorschemes: ", len(l.colorschemes))
