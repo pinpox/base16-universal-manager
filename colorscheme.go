@@ -36,10 +36,25 @@ type Base16Colorscheme struct {
 }
 
 func (s Base16Colorscheme) MustacheContext() map[string]interface{} {
-	var bases = []string{
-		"00", "01", "02", "03", "04", "05", "06", "07",
-		"08", "09", "0A", "0B", "0C", "0D", "0E", "0F",
+	var bases = map[string]string{
+		"00": s.Color00,
+		"01": s.Color01,
+		"02": s.Color02,
+		"03": s.Color03,
+		"04": s.Color04,
+		"05": s.Color05,
+		"06": s.Color06,
+		"07": s.Color07,
+		"08": s.Color08,
+		"09": s.Color09,
+		"0A": s.Color10,
+		"0B": s.Color11,
+		"0C": s.Color12,
+		"0D": s.Color13,
+		"0E": s.Color14,
+		"0F": s.Color15,
 	}
+
 	slug := "base16-test-slug"
 	ret := map[string]interface{}{
 		"scheme-name":   s.Name,
@@ -50,13 +65,13 @@ func (s Base16Colorscheme) MustacheContext() map[string]interface{} {
 		"scheme-slug-underscored": strings.Replace(slug, "-", "_", -1),
 	}
 
-	for _, base := range bases {
+	for base, color := range bases {
 		baseKey := "base" + base
 
 		//TODO
-		rVal := "33"
-		gVal := "ff"
-		bVal := "00"
+		rVal := color[:2]
+		gVal := color[2:4]
+		bVal := color[4:6]
 
 		rValf, err := strconv.ParseUint(rVal, 16, 32)
 		check(err)

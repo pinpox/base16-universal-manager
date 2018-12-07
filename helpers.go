@@ -119,5 +119,6 @@ func FindMatchInMap(choices map[string]string, input string) string {
 			distance = tempDistance
 		}
 	}
+
 	return match
 }

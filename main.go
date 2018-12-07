@@ -23,6 +23,7 @@ var (
 	templatesCachePath = "cache/templates/"
 	schemesListFile    = schemesCachePath + "schemeslist.yml"
 	templatesListFile  = templatesCachePath + "templateslist.yml"
+	outputPath         = "out"
 )
 
 //Flags
@@ -44,10 +45,12 @@ func main() {
 	os.MkdirAll(p1, os.ModePerm)
 	p2 := filepath.Join(".", templatesCachePath)
 	os.MkdirAll(p2, os.ModePerm)
+	p3 := filepath.Join(".", outputPath)
+	os.MkdirAll(p3, os.ModePerm)
 
 	// TODO Get this two vars from flags
-	userInputThemeName := "metal"
-	userInputTemplateName := "i3"
+	userInputThemeName := "flat.yaml"
+	userInputTemplateName := "termite"
 
 	schemeList := LoadBase16ColorschemeList()
 	templateList := LoadBase16TemplateList()
@@ -75,18 +78,28 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme) {
 
 	fmt.Println("Rendering template: "+templ.Name+" with colorscheme: "+scheme.Name+" Files: ", len(templ.Files))
 
-	// basePath := "https://raw.githubusercontent.com/jjjordan/base16-joe/master/templates/config.yaml"
-
 	for k, v := range templ.Files {
-		//get the template file
 		templFileData, err := DownloadFileToStirng(templ.RawBaseURL + "templates/" + k + ".mustache")
 		check(err)
-		//render
-		// := RenderMustache(templFileData, scheme)
 		renderedFile := mustache.Render(templFileData, scheme.MustacheContext())
-		//save or print
 
-		fmt.Println("Rendered:\n==========", renderedFile, "\n========\n", "wil save to: ", v.Output+v.Extension)
+		p3 := filepath.Join(".", outputPath)
+		os.MkdirAll(p3, os.ModePerm)
+
+		saveBasePath := outputPath + "/" + templ.Name + "/"
+
+		p4 := filepath.Join(".", saveBasePath)
+		os.MkdirAll(p4, os.ModePerm)
+		saveFilename := v.Output + v.Extension
+
+		savePath := saveBasePath + saveFilename
+
+		fmt.Println("writing file to: ", savePath)
+		saveFile, err := os.Create(savePath)
+		defer saveFile.Close()
+		check(err)
+		saveFile.Write([]byte(renderedFile))
+		saveFile.Close()
 
 	}
 }
