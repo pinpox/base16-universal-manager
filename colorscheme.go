@@ -85,7 +85,7 @@ type Base16ColorschemeList struct {
 	colorschemes map[string]string
 }
 
-func UpdateSchemes() {
+func (l *Base16ColorschemeList) UpdateSchemes() {
 
 	//Get all repos from master source
 	schemeRepos := make(map[string]string)
@@ -102,14 +102,12 @@ func UpdateSchemes() {
 		schemeRepos[k] = v
 	}
 
-	colorschemes := make(map[string]string)
-
 	limit := 4
 	for _, v1 := range schemeRepos {
 		fmt.Println("Getting schemes from: " + v1)
 
 		for _, v2 := range findYAMLinRepo(v1) {
-			colorschemes[v2.Name] = v2.HTMLURL
+			l.colorschemes[v2.Name] = v2.HTMLURL
 		}
 
 		//TODO remove this
@@ -120,8 +118,8 @@ func UpdateSchemes() {
 		}
 	}
 
-	fmt.Println("Found colorschemes: ", len(colorschemes))
-	SaveBase16ColorschemeList(Base16ColorschemeList{colorschemes})
+	fmt.Println("Found colorschemes: ", len(l.colorschemes))
+	SaveBase16ColorschemeList(Base16ColorschemeList{l.colorschemes})
 }
 
 func (c *Base16ColorschemeList) Find(input string) Base16Colorscheme {
@@ -129,7 +127,7 @@ func (c *Base16ColorschemeList) Find(input string) Base16Colorscheme {
 	if _, err := os.Stat(schemesListFile); os.IsNotExist(err) {
 		check(err)
 		fmt.Println("Colorschemes list not found, pulling new one...")
-		UpdateSchemes()
+		c.UpdateSchemes()
 	}
 
 	colorschemeName := FindMatchInMap(c.colorschemes, input)

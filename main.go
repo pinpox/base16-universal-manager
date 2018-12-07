@@ -73,8 +73,8 @@ func main() {
 	templateList := LoadBase16TemplateList()
 
 	if *updateFlag {
-		UpdateSchemes()
-		UpdateTemplates()
+		schemeList.UpdateSchemes()
+		templateList.UpdateTemplates()
 	}
 
 	schemeList = LoadBase16ColorschemeList()

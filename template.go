@@ -7,10 +7,19 @@ import (
 	"os"
 )
 
+type Base16ConfigItem struct {
+	Extension string `yaml:"extension"`
+	Output    string `yaml:"output"`
+}
+
+type Base16Config struct {
+	Items []Base16ConfigItem
+}
+
 type Base16Template struct {
 
 	//The actual template
-	Template string
+	Config string
 
 	//Name (of the application)
 	Name string
@@ -26,6 +35,7 @@ func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
 
 	// Create local template file, if not present
 	if _, err := os.Stat(path); os.IsNotExist(err) {
+		//TODO error here in URL!!!
 		templateData, err := DownloadFileToStirng(l.templates[name])
 		check(err)
 		saveFile, err := os.Create(path)
@@ -52,7 +62,7 @@ type Base16TemplateList struct {
 	templates map[string]string
 }
 
-func UpdateTemplates() {
+func (l *Base16TemplateList) UpdateTemplates() {
 
 	//Get all repos from master source
 	var templRepos map[string]string
@@ -63,14 +73,12 @@ func UpdateTemplates() {
 	err = yaml.Unmarshal([]byte(templatesYAML), &templRepos)
 	check(err)
 
-	templates := make(map[string]string)
-
 	fmt.Println("Found template repos: ", len(templRepos))
 	for k, v := range templRepos {
-		templates[k] = v
+		l.templates[k] = v
 	}
 
-	SaveBase16TemplateList(Base16TemplateList{templates})
+	SaveBase16TemplateList(Base16TemplateList{l.templates})
 
 }
 
@@ -88,8 +96,14 @@ func (c *Base16TemplateList) Find(input string) Base16Template {
 	if _, err := os.Stat(templatesListFile); os.IsNotExist(err) {
 		check(err)
 		fmt.Println("Templates list not found, pulling new one...")
-		UpdateTemplates()
+		c.UpdateTemplates()
 	}
+
+	if len(c.templates) == 0 {
+		fmt.Println("No templates in list, pulling new one... ")
+		c.UpdateTemplates()
+	}
+
 	templateName := FindMatchInMap(c.templates, input)
 	return c.GetBase16Template(templateName)
 }
