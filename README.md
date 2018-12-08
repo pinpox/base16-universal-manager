@@ -129,15 +129,15 @@ consists mainly of two parts:
 
 | Variable | Default | Explanation|
 | ---|---|---|
-| GithubToken |  "set-your-token-here" | see `GitHub Token (optinonal)`|
-| Colorscheme |  "flat.yml" | The colorscheme to use |
-| SchemesListFile |  "cache/schemeslist.yaml" | cache file for the list of
-Colorschemes|
-| TemplatesListFile |  "cache/templateslist.yaml" | Cache file for the list of
-templates |
-| SchemesCachePath |  "cache/schemes/" | Colorschemes cache directory| 
-| TemplatesCachePath |  "cache/templates/" | Templates cache directory |
+| GithubToken |  set-your-token-here | see `GitHub Token (optinonal)`|
+| Colorscheme |  flat.yml | The colorscheme to use |
+| SchemesListFile |  cache/schemeslist.yaml | cache file for the list of Colorschemes|
+| TemplatesListFile |  cache/templateslist.yaml | Cache file for the list of templates |
+| SchemesCachePath |  cache/schemes/ | Colorschemes cache directory| 
+| TemplatesCachePath |  cache/templates/ | Templates cache directory |
 | DryRun |  false | Print the rendered files to stdout instead of saving them|
+
+TODO: comment about levenstein
 
 
 #### Applications which you want to theme
