@@ -46,6 +46,7 @@ func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
 		templateData, err := DownloadFileToStirng(newTemplate.RawBaseURL + "templates/config.yaml")
 		check(err)
 		saveFile, err := os.Create(path)
+		//TODO delete old file?
 		defer saveFile.Close()
 		saveFile.Write([]byte(templateData))
 		saveFile.Close()

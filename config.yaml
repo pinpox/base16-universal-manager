@@ -1,0 +1,23 @@
+---
+GithubToken: "someToken"
+SchemesListFile: "cache/schemeslist.yaml"
+TemplatesListFile: "cache/templateslist.yaml"
+SchemesCachePath: "cache/schemes/"
+TemplatesCachePath: "cache/templates/"
+DryRun: true
+
+applications:
+  application1:
+    enabled: true
+    hook: "/some/path/to/execute1"
+    files:
+      filename1A: "outputpath1A"
+      filename1B: "outputpath1B"
+      filename1C: "outputpath1C"
+  application2:
+    enabled: true
+    hook: "/some/path/to/execute2"
+    files:
+      filename1B: "outputpath1B"
+      filename2B: "outputpath2B"
+      filename3B: "outputpath3B"

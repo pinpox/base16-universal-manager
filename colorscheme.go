@@ -119,6 +119,7 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 		schemeData, err := DownloadFileToStirng(yamlURL)
 		check(err)
 		saveFile, err := os.Create(path)
+		//TODO delete old file?
 		defer saveFile.Close()
 		check(err)
 		saveFile.Write([]byte(schemeData))

@@ -21,8 +21,9 @@ var (
 var (
 	schemesCachePath   = "cache/colorschemes/"
 	templatesCachePath = "cache/templates/"
-	schemesListFile    = schemesCachePath + "schemeslist.yml"
-	templatesListFile  = templatesCachePath + "templateslist.yml"
+	configFile         = "config.yaml"
+	schemesListFile    = schemesCachePath + "schemeslist.yaml"
+	templatesListFile  = templatesCachePath + "templateslist.yaml"
 	outputPath         = "out"
 )
 
@@ -34,11 +35,16 @@ var (
 	clearTemplatesFlag = kingpin.Flag("clear-schemes", "Delete local template caches").Bool()
 )
 
+//Configuration
+var appConf = NewConfig(configFile)
+
 func main() {
 
 	//Pase Flags
-	kingpin.Version("0.0.1")
+	kingpin.Version("1.0.0")
 	kingpin.Parse()
+
+	appConf.Show()
 
 	//Create cache paths, if missing
 	p1 := filepath.Join(".", schemesCachePath)
