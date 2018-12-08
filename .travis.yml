@@ -1,0 +1,18 @@
+sudo: false
+
+language: go
+
+go:
+ - master
+
+script:
+ - go build -x -v *.go
+ - go test -race -coverprofile=coverage.txt -covermode=atomic -a -x -v *.go
+
+notifications:
+  email:
+    recipients:
+      - pablo1@mailbox.org
+ 
+after_success:
+- bash <(curl -s https://codecov.io/bash)
