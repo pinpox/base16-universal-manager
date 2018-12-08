@@ -19,13 +19,57 @@ detailing how to style syntax and how to code a _builder_ for compiling Base16
 _schemes_ and _templates_.
 
 ### Why another manager/builder?
+TODO
 #### Similar projects
 
 ## Installation
+
+At the moment, you can only build and install this with go. You can install it
+directly or build it from source. I might provide packages for multiple linux
+distributions and pre-build binaries in the future.
+
+### Install directly
+```
+go install github.com/binaryplease/base16-universal-manager
+```
+### Get source and build manually
+```
+go get github.com/binaryplease/base16-universal-manager
+cd $GOPATH/src/github.com/binaryplease/base16-universal-manager
+go build
+```
+
+If you get errors on missing dependencies, install them as usual with `go get`.
+
 ## Usage
 
+To run, just execute the application without any command line flags. It will
+expect a config.yaml (example provided) in the same directory and render all
+specified application templates with the selected colorscheme.
+
+The following flags are planned and will be implemented soon:
+```
+usage: base16-setter [<flags>]
+
+Flags:
+  --help             Show context-sensitive help (also try --help-long and --help-man).
+  --update-list      Update the list of templates and colorschemes
+  --clear-list       Delete local master list caches
+  --clear-templates  Delete local scheme caches
+  --clear-schemes    Delete local template caches
+  --version          Show application version.
+```
+
 ## Configuration
+### GitHub Token
+TODO
+### Configuration file
+TODO
+
 ### Applications
+Base16 Universal Manager can support all applications listed in the base16 repo.
+For application-specific integration examples see the following list.
+
 #### alacritty
 #### binary-ninja
 #### blink
