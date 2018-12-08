@@ -49,7 +49,7 @@ func main() {
 	}
 
 	scheme := schemeList.Find(appConf.Colorscheme)
-	fmt.Println("[RENDER]: Selected scheme: ", scheme.Name)
+	fmt.Println("[CONFIG]: Selected scheme: ", scheme.Name)
 
 	for k := range appConf.Applications {
 
