@@ -110,6 +110,10 @@ func SaveStringMap(data map[string]string, path string) {
 
 func FindMatchInMap(choices map[string]string, input string) string {
 
+	if len(choices) == 0 {
+		panic("cannot select from empty choices")
+
+	}
 	var match string
 	distance := 1000
 
