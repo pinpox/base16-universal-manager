@@ -17,7 +17,7 @@ import (
 //contents as a string if successful
 func DownloadFileToStirng(url string) (string, error) {
 
-	fmt.Println("Downloading ", url)
+	// fmt.Println("Downloading ", url)
 
 	var client http.Client
 	resp, err := client.Get(url + "?access_token=" + appConf.GithubToken)

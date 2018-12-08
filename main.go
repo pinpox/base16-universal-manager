@@ -3,12 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/hoisie/mustache"
-	// "gopkg.in/yaml.v2"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"os"
 	"path/filepath"
-
-	_ "text/template"
 )
 
 //Master sources
@@ -17,15 +14,8 @@ var (
 	templatesSourceURL = "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
 )
 
-//Paths
-var (
-	// schemesCachePath   = "cache/colorschemes/"
-	// templatesCachePath = "cache/templates/"
-	configFile = "config.yaml"
-	// schemesListFile    = schemesCachePath + "schemeslist.yaml"
-	// templatesListFile  = templatesCachePath + "templateslist.yaml"
-	outputPath = "out"
-)
+// Configuration file
+var configFile = "config.yaml"
 
 //Flags
 var (
@@ -44,7 +34,7 @@ func main() {
 	kingpin.Version("1.0.0")
 	kingpin.Parse()
 
-	appConf.Show()
+	// appConf.Show()
 	//TODO delete caches, if user wants to
 
 	//Create cache paths, if missing
@@ -52,8 +42,6 @@ func main() {
 	os.MkdirAll(p1, os.ModePerm)
 	p2 := filepath.Join(".", appConf.TemplatesCachePath)
 	os.MkdirAll(p2, os.ModePerm)
-	p3 := filepath.Join(".", outputPath) //TODO remove this when using the conf
-	os.MkdirAll(p3, os.ModePerm)
 
 	schemeList := LoadBase16ColorschemeList()
 	templateList := LoadBase16TemplateList()
@@ -64,15 +52,14 @@ func main() {
 	}
 
 	scheme := schemeList.Find(appConf.Colorscheme)
-	fmt.Println("Selected scheme: ", scheme.Name)
+	fmt.Println("[RENDER]: Selected scheme: ", scheme.Name)
 
-	for k, _ := range appConf.Applications {
+	for k := range appConf.Applications {
 
 		schemeList = LoadBase16ColorschemeList()
 		templateList = LoadBase16TemplateList()
 
 		templ := templateList.Find(k)
-		fmt.Println("Selected template: ", templ.Name)
 
 		Base16Render(templ, scheme)
 
@@ -82,25 +69,19 @@ func main() {
 
 func Base16Render(templ Base16Template, scheme Base16Colorscheme) {
 
-	fmt.Println("Rendering template: "+templ.Name+" with colorscheme: "+scheme.Name+" Files: ", len(templ.Files))
+	fmt.Println("[RENDER]: Rendering template \"" + templ.Name + "\"")
 
 	for k, v := range templ.Files {
 		templFileData, err := DownloadFileToStirng(templ.RawBaseURL + "templates/" + k + ".mustache")
 		check(err)
 		renderedFile := mustache.Render(templFileData, scheme.MustacheContext())
 
-		p3 := filepath.Join(".", outputPath)
-		os.MkdirAll(p3, os.ModePerm)
-
-		saveBasePath := outputPath + "/" + templ.Name + "/"
-
+		saveBasePath := appConf.Applications[templ.Name].Files[k] + "/"
 		p4 := filepath.Join(".", saveBasePath)
 		os.MkdirAll(p4, os.ModePerm)
-		saveFilename := v.Output + v.Extension
+		savePath := saveBasePath + k + v.Extension
 
-		savePath := saveBasePath + saveFilename
-
-		fmt.Println("writing file to: ", savePath)
+		fmt.Println("     - writing: ", savePath)
 		saveFile, err := os.Create(savePath)
 		defer saveFile.Close()
 		check(err)
@@ -110,6 +91,7 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme) {
 	}
 }
 
+//TODO proper error handling
 func check(e error) {
 	if e != nil {
 		panic(e)
