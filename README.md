@@ -183,7 +183,8 @@ Base16 Universal Manager can support all applications listed in the base16 repo.
 For application-specific integration examples see the following list.
 
 #### alacritty
-- Repo: TODO
+- Repo: https://github.com/aaron-williamson/base16-alacritty
+
 
 Example configuration:
 ```
@@ -193,7 +194,7 @@ Example configuration:
 ```
 
 #### binary-ninja
-- Repo: TODO
+- Repo: https://github.com/evanrichter/base16-binary-ninja
 
 Example configuration:
 ```
@@ -202,7 +203,7 @@ Example configuration:
 
 ```
 #### blink
-- Repo: TODO
+- Repo: https://github.com/niklaas/base16-blink.git
 
 Example configuration:
 ```
@@ -211,7 +212,7 @@ Example configuration:
 
 ```
 #### c_header
-- Repo: TODO
+- Repo: https://github.com/m1sports20/base16-c_header
 
 Example configuration:
 ```
@@ -220,7 +221,7 @@ Example configuration:
 
 ```
 #### concfg
-- Repo: TODO
+- Repo: https://github.com/h404bi/base16-concfg
 
 Example configuration:
 ```
@@ -229,7 +230,7 @@ Example configuration:
 
 ```
 #### conemu
-- Repo: TODO
+- Repo: https://github.com/martinlindhe/base16-conemu
 
 Example configuration:
 ```
