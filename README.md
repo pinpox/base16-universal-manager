@@ -109,10 +109,40 @@ Flags:
 ```
 
 ## Configuration
-### GitHub Token
-TODO
+### GitHub Token (optional)
+This program fetches data using the GitHub API. If you are not logged in, you
+might get blocked by the API's [rate limiting](https://developer.github.com/v3/#rate-limiting)
+
+To increase the amout of allowed request, you can use personal access-token.
+Generate one [here](https://github.com/settings/tokens/new) (Default options
+should be enough, just provide a name) and put it in your configuration file.
+
+Putting the token in the configuration will automatically use it to make all
+requests as a registered user.
+
 ### Configuration file
-TODO
+
+The configuration file specifies everything the program should do when run. It
+consists mainly of two parts:
+
+#### General configuration values
+
+| Variable | Default | Explanation|
+| ---|---|---|
+| GithubToken |  "set-your-token-here" | see `GitHub Token (optinonal)`|
+| Colorscheme |  "flat.yml" | The colorscheme to use |
+| SchemesListFile |  "cache/schemeslist.yaml" | cache file for the list of
+Colorschemes|
+| TemplatesListFile |  "cache/templateslist.yaml" | Cache file for the list of
+templates |
+| SchemesCachePath |  "cache/schemes/" | Colorschemes cache directory| 
+| TemplatesCachePath |  "cache/templates/" | Templates cache directory |
+| DryRun |  false | Print the rendered files to stdout instead of saving them|
+
+
+#### Applications which you want to theme
+
+
 
 ### Applications
 Base16 Universal Manager can support all applications listed in the base16 repo.
