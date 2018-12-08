@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
 	"regexp"
 	"strings"
 )
@@ -121,4 +122,23 @@ func FindMatchInMap(choices map[string]string, input string) string {
 	}
 
 	return match
+}
+
+func exe_cmd(cmd string) {
+
+	if len(cmd) == 0 {
+		return
+	}
+	parts := strings.Fields(cmd)
+	head := parts[0]
+	parts = parts[1:len(parts)]
+
+	out, err := exec.Command(head, parts...).Output()
+
+	fmt.Println("[HOOK]: Running: ", cmd)
+
+	if err != nil {
+		fmt.Printf("%s\n", err)
+	}
+	fmt.Printf("%s\n", out)
 }

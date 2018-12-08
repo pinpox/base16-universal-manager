@@ -86,6 +86,8 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme) {
 		saveFile.Close()
 
 	}
+
+	exe_cmd(appConf.Applications[templ.Name].Hook)
 }
 
 //TODO proper error handling
