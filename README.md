@@ -1,6 +1,7 @@
-#![Base16](logo.png)
+# ![Base16](logo.png)
 
-# Base16 Universal Manager
+## About
+### Base16 Universal Manager
 Gets a base16 colorscheme and a theme from the official repos and renders it out to a given filepath.
 TODO
 
