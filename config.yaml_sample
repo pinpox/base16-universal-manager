@@ -1,43 +1,241 @@
 ---
-GithubToken: "set-your-token-here"
-Colorscheme: "flat.yml"
+# Get a toke at https://github.com/settings/tokens/new improve rate limit
+GithubToken: ""
+# Select a colorscheme you want to use
+Colorscheme: "flat.yaml"
+# Location where the avaitible colorschemes will be cached
 SchemesListFile: "cache/schemeslist.yaml"
+# Location where the avaitible templates will be cached
 TemplatesListFile: "cache/templateslist.yaml"
+# Location to cache the actual colorschemes
 SchemesCachePath: "cache/schemes/"
+# Location to cache the actual templates
 TemplatesCachePath: "cache/templates/"
+# Enalbe/Disable dry-run. If enabled no configs will be altered
 DryRun: true
-
+# Set the applications templates you want to render to true
 applications:
-  i3:
-    enabled: true
-    hook: "/some/path/to/execute1"
-    files:
-      default: "out/i3"
-      bar-colors: "out/i3"
-      colors: "out/i3"
-      client-properties: "out/i3"
-  vim:
-    enabled: true
-    hook: "/some/path/to/execute2"
-    files:
-      default: "out/vim"
-  iterm2:
-    enabled: true
-    hook: "/some/path/to/execute2"
-    files:
-      default: "out/iterm2"
-      default-256: "out/iterm2"
-  rofi:
-    enabled: true
-    hook: "/some/path/to/execute2"
-    files:
-      default: "out/rofi"
-      old: "out/rofi"
-  dunst:
-    enabled: true
-    hook: "/some/path/to/execute2"
-    files:
-      default: "out/dunst"
-
-
-
+    alacritty:
+        # Enable or disable allacritty
+        enabled: false
+        # Set a hook to run after rendering the template
+        hook: ""
+        # Specify where to output the rendered result
+        files:
+            #default: ~/.alacritty.yml
+    binary-ninja:
+        enabled: false
+        hook: ""
+        files:
+    blink:
+        enabled: false
+        hook: ""
+        files:
+    c_header:
+        enabled: false
+        hook: ""
+        files:
+    concfg:
+        enabled: false
+        hook: ""
+        files:
+    conemu:
+        enabled: false
+        hook: ""
+        files:
+    console2:
+        enabled: false
+        hook: ""
+        files:
+    crosh:
+        enabled: false
+        hook: ""
+        files:
+    dunst:
+        enabled: false
+        hook: ""
+        files:
+    emacs:
+        enabled: false
+        hook: ""
+        files:
+    fzf:
+        enabled: false
+        hook: ""
+        files:
+    gnome-terminal:
+        enabled: false
+        hook: ""
+        files:
+    godot:
+        enabled: false
+        hook: ""
+        files:
+    gtk2:
+        enabled: false
+        hook: ""
+        files:
+    highlight:
+        enabled: false
+        hook: ""
+        files:
+    html-preview:
+        enabled: false
+        hook: ""
+        files:
+    i3:
+        enabled: false
+        hook: ""
+        files:
+    i3status-rust:
+        enabled: false
+        hook: ""
+        files:
+    iterm2:
+        enabled: false
+        hook: ""
+        files:
+    jetbrains:
+        enabled: false
+        hook: ""
+        files:
+    joe:
+        enabled: false
+        hook: ""
+        files:
+    kakoune:
+        enabled: false
+        hook: ""
+        files:
+    kitty:
+        enabled: false
+        hook: ""
+        files:
+    konsole:
+        enabled: false
+        hook: ""
+        files:
+    mintty:
+        enabled: false
+        hook: ""
+        files:
+    monodevelop:
+        enabled: false
+        hook: ""
+        files:
+    prism:
+        enabled: false
+        hook: ""
+        files:
+    prompt-toolkit:
+        enabled: false
+        hook: ""
+        files:
+    putty:
+        enabled: false
+        hook: ""
+        files:
+    pygments:
+        enabled: false
+        hook: ""
+        files:
+    pywal:
+        enabled: false
+        hook: ""
+        files:
+    qtcreator:
+        enabled: false
+        hook: ""
+        files:
+    qutebrowser:
+        enabled: false
+        hook: ""
+        files:
+    radare2:
+        enabled: false
+        hook: ""
+        files:
+    rofi:
+        enabled: false
+        hook: ""
+        files:
+    shell:
+        enabled: false
+        hook: ""
+        files:
+    scide:
+        enabled: false
+        hook: ""
+        files:
+    st:
+        enabled: false
+        hook: ""
+        files:
+    stumpwm:
+        enabled: false
+        hook: ""
+        files:
+    styles:
+        enabled: false
+        hook: ""
+        files:
+    telegram-desktop:
+        enabled: false
+        hook: ""
+        files:
+    termite:
+        enabled: false
+        hook: ""
+        files:
+    termux:
+        enabled: false
+        hook: ""
+        files:
+    textmate:
+        enabled: false
+        hook: ""
+        files:
+    tmux:
+        enabled: false
+        hook: ""
+        files:
+    tilix:
+        enabled: false
+        hook: ""
+        files:
+    vim:
+        enabled: false
+        hook: ""
+        files:
+    vis:
+        enabled: false
+        hook: ""
+        files:
+    vscode:
+        enabled: false
+        hook: ""
+        files:
+    windows-command-prompt:
+        enabled: false
+        hook: ""
+        files:
+    xcode:
+        enabled: false
+        hook: ""
+        files:
+    xfce4-terminal:
+        enabled: false
+        hook: ""
+        files:
+    xresources:
+        enabled: false
+        hook: ""
+        files:
+    xshell:
+        enabled: false
+        hook: ""
+        files:
+    zathura:
+        enabled: false
+        hook: ""
+        files:
