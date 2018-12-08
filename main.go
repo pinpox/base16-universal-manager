@@ -9,7 +9,7 @@ import (
 )
 
 // Configuration file
-var configFile = "config.yaml"
+var configFile string
 
 //Flags
 var (
@@ -17,16 +17,19 @@ var (
 	clearListFlag      = kingpin.Flag("clear-list", "Delete local master list caches").Bool()
 	clearSchemesFlag   = kingpin.Flag("clear-templates", "Delete local scheme caches").Bool()
 	clearTemplatesFlag = kingpin.Flag("clear-schemes", "Delete local template caches").Bool()
+	configFileFlag     = kingpin.Flag("config", "Specify configuration file to use").Default("config.yaml").String()
 )
 
 //Configuration
-var appConf = NewConfig(configFile)
+var appConf SetterConfig
 
 func main() {
 
 	//Pase Flags
 	kingpin.Version("1.0.0")
 	kingpin.Parse()
+
+	appConf = NewConfig(*configFileFlag)
 
 	// appConf.Show()
 	//TODO delete caches, if user wants to

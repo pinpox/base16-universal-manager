@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"os"
 )
 
 type SetterConfig struct {
@@ -28,6 +29,11 @@ type StetterAppConfig struct {
 func NewConfig(path string) SetterConfig {
 	var conf SetterConfig
 	file, err := ioutil.ReadFile(path)
+	if err != nil {
+
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
+	}
 	check(err)
 	err = yaml.Unmarshal((file), &conf)
 	check(err)
