@@ -1,5 +1,5 @@
 ---
-GithubToken: "05ceb2f379797edbc9b587ca616459ccf456bfd6"
+GithubToken: "set-your-token-here"
 Colorscheme: "flat.yml"
 SchemesListFile: "cache/schemeslist.yaml"
 TemplatesListFile: "cache/templateslist.yaml"
