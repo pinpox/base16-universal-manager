@@ -9,7 +9,7 @@
 
 ## About
 ### Base16 Universal Manager
-Gets a base16 colorscheme and a theme from the official repos and renders it out to a given filepath.
+Gets a [base16](https://github.com/chriskempson/base16) colorscheme the configured templates from the official repos and renders them out to the given locatinos
 TODO
 
 ### Base16 themes
