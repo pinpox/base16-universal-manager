@@ -19,8 +19,56 @@ detailing how to style syntax and how to code a _builder_ for compiling Base16
 _schemes_ and _templates_.
 
 ### Why another manager/builder?
-TODO
+Base16 themes look great and the fact that you can use them on a lot of
+different applications makes it easy to get a desktop configuration set up
+easealy that looks uniformly themed. I really like the idea of having theme
+colors and the templates for different applications separated.
+
+The common workflow to set up a theme on your system looks like this in most
+cases:
+
+1. Search for a theme you like
+2. Scroll through the support list of supported applications to find all the
+   ones you need
+3. Download or build the theme files for every application
+4. Copy them all in their respective places.
+5. Restart or refresh every application
+
+I found this pretty tedious to do, since I like to change my theme every now and
+then. This is where the need for a manager came up.
+
+The idea: automate the complete workflow above. After setting up my
+configuration for the manager **once** I ideally want to run **one** command and
+have all my applicatins set-up and ready whith the theme I choose.
+
+There are other projects that try to simplify this workflow, but I have had
+problems with them in the past and don't particulary like the designs. Setting a
+theme should *not* require me to download or build them *all*. It also should
+really set them, avoiding having to run a theme-setting script every time the
+application is started.
+
+### What Base16 Universal Manager is NOT
+Even though this project builds the themes needed and could probably be expanded
+or used as a theme builder in the sense described in the official base16
+guidelines, this is not what it is intended for. It is mainly aimed at users and
+not theme or template maintainers and desigend to only get and build the stuff
+the user really needs.
+
 #### Similar projects
+[base16-shell]() A shell script to change your shell's default ANSI colors
+
+I liked the idea, but it limits the use to command line applications.
+Also I found the script to be to slow on my system, which results in the colors
+of new terminals been changed about ~0.5s after start. In the meantime my
+terminal waits. There probably are usecases, where this is the better choice,
+but it was not what I was looking for.
+
+[base16-manager]() A command line tool to install base16 templates and set themes globally.
+
+Even though this project aimed to provide the same funcionality, only very few
+applications are supported. Also it required me to download a lot of repos I
+will never use.
+
 
 ## Installation
 
