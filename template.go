@@ -74,7 +74,7 @@ func (l *Base16TemplateList) UpdateTemplates() {
 	//Get all repos from master source
 	var templRepos map[string]string
 
-	templatesYAML, err := DownloadFileToStirng(templatesSourceURL)
+	templatesYAML, err := DownloadFileToStirng(appConf.TemplatesMasterURL)
 	check(err)
 
 	err = yaml.Unmarshal([]byte(templatesYAML), &templRepos)

@@ -159,7 +159,7 @@ func (l *Base16ColorschemeList) UpdateSchemes() {
 	//Get all repos from master source
 	schemeRepos := make(map[string]string)
 
-	schemesYAML, err := DownloadFileToStirng(schemesSourceURL)
+	schemesYAML, err := DownloadFileToStirng(appConf.SchemesMasterURL)
 	check(err)
 
 	err = yaml.Unmarshal([]byte(schemesYAML), &schemeRepos)

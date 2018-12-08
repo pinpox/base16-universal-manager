@@ -8,12 +8,6 @@ import (
 	"path/filepath"
 )
 
-//Master sources
-var (
-	schemesSourceURL   = "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
-	templatesSourceURL = "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
-)
-
 // Configuration file
 var configFile = "config.yaml"
 

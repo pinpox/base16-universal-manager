@@ -8,6 +8,8 @@ import (
 
 type SetterConfig struct {
 	GithubToken        string                      `yaml:"GithubToken"`
+	SchemesMasterURL   string                      `yaml:"SchemesMasterURL"`
+	TemplatesMasterURL string                      `yaml:"TemplatesMasterURL"`
 	SchemesListFile    string                      `yaml:"SchemesListFile"`
 	TemplatesListFile  string                      `yaml:"TemplatesListFile"`
 	SchemesCachePath   string                      `yaml:"SchemesCachePath"`
