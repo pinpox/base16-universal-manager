@@ -105,7 +105,7 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 		panic("Colorscheme name was empty")
 	}
 
-	path := schemesCachePath + name
+	path := appConf.SchemesCachePath + name
 
 	// Create local schemes file, if not present
 	if _, err := os.Stat(path); os.IsNotExist(err) {
@@ -142,12 +142,12 @@ func NewBase16Colorscheme(yamlData string) Base16Colorscheme {
 }
 
 func LoadBase16ColorschemeList() Base16ColorschemeList {
-	colorschemes := LoadStringMap(schemesListFile)
+	colorschemes := LoadStringMap(appConf.SchemesListFile)
 	return Base16ColorschemeList{colorschemes}
 }
 
 func SaveBase16ColorschemeList(l Base16ColorschemeList) {
-	SaveStringMap(l.colorschemes, schemesListFile)
+	SaveStringMap(l.colorschemes, appConf.SchemesListFile)
 }
 
 type Base16ColorschemeList struct {
@@ -186,7 +186,7 @@ func (l *Base16ColorschemeList) UpdateSchemes() {
 
 func (c *Base16ColorschemeList) Find(input string) Base16Colorscheme {
 
-	if _, err := os.Stat(schemesListFile); os.IsNotExist(err) {
+	if _, err := os.Stat(appConf.SchemesListFile); os.IsNotExist(err) {
 		check(err)
 		fmt.Println("Colorschemes list not found, pulling new one...")
 		c.UpdateSchemes()

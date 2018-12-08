@@ -39,7 +39,7 @@ func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
 	newTemplate.RawBaseURL = "https://raw.githubusercontent.com/" + parts[3] + "/" + parts[4] + "/master/"
 	newTemplate.Name = name
 
-	path := templatesCachePath + name
+	path := appConf.TemplatesCachePath + name
 
 	// Create local template file, if not present
 	if _, err := os.Stat(path); os.IsNotExist(err) {
@@ -90,17 +90,17 @@ func (l *Base16TemplateList) UpdateTemplates() {
 }
 
 func LoadBase16TemplateList() Base16TemplateList {
-	colorschemes := LoadStringMap(templatesListFile)
+	colorschemes := LoadStringMap(appConf.TemplatesListFile)
 	return Base16TemplateList{colorschemes}
 }
 
 func SaveBase16TemplateList(l Base16TemplateList) {
-	SaveStringMap(l.templates, templatesListFile)
+	SaveStringMap(l.templates, appConf.TemplatesListFile)
 }
 
 func (c *Base16TemplateList) Find(input string) Base16Template {
 
-	if _, err := os.Stat(templatesListFile); os.IsNotExist(err) {
+	if _, err := os.Stat(appConf.TemplatesListFile); os.IsNotExist(err) {
 		check(err)
 		fmt.Println("Templates list not found, pulling new one...")
 		c.UpdateTemplates()

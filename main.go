@@ -19,12 +19,12 @@ var (
 
 //Paths
 var (
-	schemesCachePath   = "cache/colorschemes/"
-	templatesCachePath = "cache/templates/"
-	configFile         = "config.yaml"
-	schemesListFile    = schemesCachePath + "schemeslist.yaml"
-	templatesListFile  = templatesCachePath + "templateslist.yaml"
-	outputPath         = "out"
+	// schemesCachePath   = "cache/colorschemes/"
+	// templatesCachePath = "cache/templates/"
+	configFile = "config.yaml"
+	// schemesListFile    = schemesCachePath + "schemeslist.yaml"
+	// templatesListFile  = templatesCachePath + "templateslist.yaml"
+	outputPath = "out"
 )
 
 //Flags
@@ -45,18 +45,15 @@ func main() {
 	kingpin.Parse()
 
 	appConf.Show()
+	//TODO delete caches, if user wants to
 
 	//Create cache paths, if missing
-	p1 := filepath.Join(".", schemesCachePath)
+	p1 := filepath.Join(".", appConf.SchemesCachePath)
 	os.MkdirAll(p1, os.ModePerm)
-	p2 := filepath.Join(".", templatesCachePath)
+	p2 := filepath.Join(".", appConf.TemplatesCachePath)
 	os.MkdirAll(p2, os.ModePerm)
-	p3 := filepath.Join(".", outputPath)
+	p3 := filepath.Join(".", outputPath) //TODO remove this when using the conf
 	os.MkdirAll(p3, os.ModePerm)
-
-	// TODO Get this two vars from flags
-	userInputThemeName := "flat.yaml"
-	userInputTemplateName := "termite"
 
 	schemeList := LoadBase16ColorschemeList()
 	templateList := LoadBase16TemplateList()
@@ -66,17 +63,20 @@ func main() {
 		templateList.UpdateTemplates()
 	}
 
-	//TODO delete caches, if user wants to
-	schemeList = LoadBase16ColorschemeList()
-	templateList = LoadBase16TemplateList()
-
-	templ := templateList.Find(userInputTemplateName)
-	fmt.Println("Selected template: ", templ.Name)
-
-	scheme := schemeList.Find(userInputThemeName)
+	scheme := schemeList.Find(appConf.Colorscheme)
 	fmt.Println("Selected scheme: ", scheme.Name)
 
-	Base16Render(templ, scheme)
+	for k, _ := range appConf.Applications {
+
+		schemeList = LoadBase16ColorschemeList()
+		templateList = LoadBase16TemplateList()
+
+		templ := templateList.Find(k)
+		fmt.Println("Selected template: ", templ.Name)
+
+		Base16Render(templ, scheme)
+
+	}
 
 }
 

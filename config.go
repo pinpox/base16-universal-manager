@@ -13,6 +13,7 @@ type SetterConfig struct {
 	SchemesCachePath   string                      `yaml:"SchemesCachePath"`
 	TemplatesCachePath string                      `yaml:"TemplatesCachePath"`
 	DryRun             bool                        `yaml:"DryRun"`
+	Colorscheme        string                      `yaml:"Colorscheme"`
 	Applications       map[string]StetterAppConfig `yaml:"applications"`
 }
 

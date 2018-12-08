@@ -20,7 +20,7 @@ func DownloadFileToStirng(url string) (string, error) {
 	fmt.Println("Downloading ", url)
 
 	var client http.Client
-	resp, err := client.Get(url + "?access_token=05ceb2f379797edbc9b587ca616459ccf456bfd6")
+	resp, err := client.Get(url + "?access_token=" + appConf.GithubToken)
 	if err != nil {
 		return "", err
 	}
