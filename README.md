@@ -83,4 +83,13 @@ _schemes_ and _templates_.
 #### zathura
 
 ## Contributing
+I hacked this project together in a weekend and it grew to be bigger than
+expected. The code quality could be way better and even though it is already
+pretty usable, you might find bugs or other issues. The documentation is
+work-in-progress.
+
+Issues, bug-reports, pull requests or ideas for features and improvements are
+**very welcome**. Also it would be great if users of specific applications can
+document the usage of their respective templates, as I don't use all of them and
+can't/won't test the integration for every single application.
 
