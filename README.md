@@ -1,11 +1,10 @@
-# base16 Universal Manager
+#![Base16](logo.png)
 
-## About
+# Base16 Universal Manager
 Gets a base16 colorscheme and a theme from the official repos and renders it out to a given filepath.
 TODO
 
 ### Base16 themes
-![Base16](logo.png)
 An architecture for building themes based on carefully chosen syntax
 highlighting using a base of sixteen colors. Base16 provides a set of guidelines
 detailing how to style syntax and how to code a _builder_ for compiling Base16
