@@ -78,16 +78,24 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme) {
 		os.MkdirAll(p4, os.ModePerm)
 		savePath := saveBasePath + k + v.Extension
 
-		fmt.Println("     - writing: ", savePath)
-		saveFile, err := os.Create(savePath)
-		defer saveFile.Close()
-		check(err)
-		saveFile.Write([]byte(renderedFile))
-		saveFile.Close()
-
+		//If DryRun is enabled, just print the output location for debugging
+		if appConf.DryRun {
+			fmt.Println("    - (dryrun) file would be written to: ", savePath)
+		} else {
+			fmt.Println("     - writing: ", savePath)
+			saveFile, err := os.Create(savePath)
+			defer saveFile.Close()
+			check(err)
+			saveFile.Write([]byte(renderedFile))
+			saveFile.Close()
+		}
 	}
 
-	exe_cmd(appConf.Applications[templ.Name].Hook)
+	if appConf.DryRun {
+		fmt.Println("Not running hook, DryRun enabled: ", appConf.Applications[templ.Name].Hook)
+	} else {
+		exe_cmd(appConf.Applications[templ.Name].Hook)
+	}
 }
 
 //TODO proper error handling
