@@ -82,12 +82,19 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme) {
 		if appConf.DryRun {
 			fmt.Println("    - (dryrun) file would be written to: ", savePath)
 		} else {
-			fmt.Println("     - writing: ", savePath)
-			saveFile, err := os.Create(savePath)
-			defer saveFile.Close()
-			check(err)
-			saveFile.Write([]byte(renderedFile))
-			saveFile.Close()
+			switch appConf.Applications[templ.Name].Mode {
+			case "rewrite":
+				fmt.Println("     - writing: ", savePath)
+				saveFile, err := os.Create(savePath)
+				defer saveFile.Close()
+				check(err)
+				saveFile.Write([]byte(renderedFile))
+				saveFile.Close()
+			case "append":
+				fmt.Println("     - appending to: ", savePath)
+			case "replace":
+				fmt.Println("     - replacing in: ", savePath)
+			}
 		}
 	}
 

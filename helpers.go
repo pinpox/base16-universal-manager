@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 
 	"fmt"
-	"github.com/agnivade/levenshtein"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
+
+	"github.com/agnivade/levenshtein"
+	"gopkg.in/yaml.v2"
 )
 
 //DownloadFileToStirng downloads a file from a given URL and returns it's
@@ -145,4 +146,25 @@ func exe_cmd(cmd string) {
 		fmt.Printf("%s\n", err)
 	}
 	fmt.Printf("%s\n", out)
+}
+
+func WriteFile(path string, data string) {
+	f, err := os.Create(path)
+	defer f.Close()
+	check(err)
+	f.Write([]byte(data))
+	f.Close()
+}
+
+func AppendFile(path string, data string) {
+	f, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0600)
+	check(err)
+	defer f.Close()
+	_, err = f.WriteString(data)
+	check(err)
+}
+
+func ReplaceMultiline(input string, replacement string, blockStart, blockEnd string) string {
+	r := regexp.MustCompile("(?s)" + blockStart + ".*" + blockEnd)
+	return blockStart + r.ReplaceAllString(input, replacement) + blockEnd
 }
