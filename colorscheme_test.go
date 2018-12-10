@@ -100,19 +100,39 @@ func TestBase16ColorschemeList_GetBase16Colorscheme(t *testing.T) {
 }
 
 func TestNewBase16Colorscheme(t *testing.T) {
-	type args struct {
-		yamlData string
+	data1, _ := DownloadFileToStirng("https://raw.githubusercontent.com/atelierbram/base16-atelier-schemes/master/atelier-forest.yaml")
+	want1 := Base16Colorscheme{
+		Name:       "Atelier Forest",
+		Author:     "Bram de Haan (http://atelierbramdehaan.nl)",
+		Color00:    "1b1918",
+		Color01:    "2c2421",
+		Color02:    "68615e",
+		Color03:    "766e6b",
+		Color04:    "9c9491",
+		Color05:    "a8a19f",
+		Color06:    "e6e2e0",
+		Color07:    "f1efee",
+		Color08:    "f22c40",
+		Color09:    "df5320",
+		Color10:    "c38418",
+		Color11:    "7b9726",
+		Color12:    "3d97b8",
+		Color13:    "407ee7",
+		Color14:    "6666ea",
+		Color15:    "c33ff3",
+		RepoURL:    "",
+		RawBaseURL: "",
 	}
 	tests := []struct {
-		name string
-		args args
-		want Base16Colorscheme
+		name     string
+		yamlData string
+		want     Base16Colorscheme
 	}{
-		// TODO: Add test cases.
+		{"Parse atelier-forest theme", data1, want1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewBase16Colorscheme(tt.args.yamlData); !reflect.DeepEqual(got, tt.want) {
+			if got := NewBase16Colorscheme(tt.yamlData); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewBase16Colorscheme() = %v, want %v", got, tt.want)
 			}
 		})
