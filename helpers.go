@@ -3,8 +3,11 @@ package main
 import (
 	"encoding/json"
 
+	"bufio"
+	"bytes"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -167,4 +170,28 @@ func AppendFile(path string, data string) {
 func ReplaceMultiline(input string, replacement string, blockStart, blockEnd string) string {
 	r := regexp.MustCompile("(?s)" + blockStart + ".*" + blockEnd)
 	return blockStart + r.ReplaceAllString(input, replacement) + blockEnd
+}
+
+func deepCompareFiles(file1, file2 string) bool {
+	sf, err := os.Open(file1)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	df, err := os.Open(file2)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sscan := bufio.NewScanner(sf)
+	dscan := bufio.NewScanner(df)
+
+	for sscan.Scan() {
+		dscan.Scan()
+		if !bytes.Equal(sscan.Bytes(), dscan.Bytes()) {
+			return false
+		}
+	}
+
+	return true
 }
