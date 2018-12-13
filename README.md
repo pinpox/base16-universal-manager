@@ -1,7 +1,6 @@
 [![Build Status](https://api.travis-ci.org/binaryplease/base16-universal-manager.svg)](http://travis-ci.org/binaryplease/base16-universal-manager) [![GoDoc](https://godoc.org/github.com/binaryplease/base16-universal-manager?status.svg)](http://godoc.org/github.com/binaryplease/base16-universal-manager)
 [![Go Report Card](https://goreportcard.com/badge/github.com/binaryplease/base16-universal-manager)](https://goreportcard.com/report/github.com/binaryplease/base16-universal-manager)
 [![codecov](https://codecov.io/gh/binaryplease/base16-universal-manager/branch/master/graph/badge.svg)](https://codecov.io/gh/binaryplease/base16-universal-manager)
-[![Maintainability](https://api.codeclimate.com/v1/badges/65217f7940ee0e37d474/maintainability)](https://codeclimate.com/github/binaryplease/base16-universal-manager/maintainability)
 [![HitCount](http://hits.dwyl.io/binaryplease/base16-universal-manager.svg)](http://hits.dwyl.io/binaryplease/base16-universal-manager)
 
 
