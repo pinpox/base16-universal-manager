@@ -132,12 +132,19 @@ func TestWriteFile(t *testing.T) {
 		name string
 		path string
 		data string
+		want string
 	}{
-		// TODO: Add test cases.
+		{"Write simple string", "testdata/output1", "A simple string", "testdata/writefile/expect1"},
+		{"Write emtpy string", "testdata/output2", "", "testdata/writefile/expect2"},
+		{"Write string with linebreaks", "testdata/output3", "A string\nwith \nlinebreaks", "testdata/writefile/expect3"},
+		{"Re-Write string with linebreaks", "testdata/output4", "A string\nwith \nlinebreaks", "testdata/writefile/expect3"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			WriteFile(tt.path, tt.data)
+			if !deepCompareFiles(tt.path, tt.want) {
+				t.Errorf("WriteFile() \"%v\" files differ", tt.name)
+			}
 		})
 	}
 }
@@ -186,9 +193,9 @@ func Test_deepCompareFiles(t *testing.T) {
 		file2 string
 		want  bool
 	}{
-		{"Two identical files", "./testdata/fileA1equal", "./testdata/fileA2equal", true},
-		{"Two differing files", "./testdata/fileB1diff", "./testdata/fileB2diff", false},
-		{"Two emtpy files", "./testdata/fileC1empty", "./testdata/fileC2empty", true},
+		{"Two identical files", "./testdata/compare/fileA1equal", "./testdata/compare/fileA2equal", true},
+		{"Two differing compare/files", "./testdata/compare/fileB1diff", "./testdata/compare/fileB2diff", false},
+		{"Two emtpy files", "./testdata/compare/fileC1empty", "./testdata/compare/fileC2empty", true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
