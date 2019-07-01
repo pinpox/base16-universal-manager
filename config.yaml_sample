@@ -1,6 +1,10 @@
 ---
 # Get a toke at https://github.com/settings/tokens/new improve rate limit
 GithubToken: ""
+# Set the URL for the Schemes master list
+SchemesMasterURL: "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
+# Set the URL for the Templates master list
+TemplatesMasterURL: "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
 # Select a colorscheme you want to use
 Colorscheme: "flat.yaml"
 # Location where the avaitible colorschemes will be cached
