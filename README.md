@@ -103,8 +103,8 @@ Flags:
   --help             Show context-sensitive help (also try --help-long and --help-man).
   --update-list      Update the list of templates and colorschemes
   --clear-list       Delete local master list caches
-  --clear-templates  Delete local scheme caches
-  --clear-schemes    Delete local template caches
+  --clear-schemes    Delete local scheme caches
+  --clear-templates  Delete local template caches
   --version          Show application version.
 ```
 
