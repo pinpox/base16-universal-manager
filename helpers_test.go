@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"reflect"
 	"testing"
 )
@@ -140,6 +141,7 @@ func TestWriteFile(t *testing.T) {
 		{"Re-Write string with linebreaks", "testdata/output4", "A string\nwith \nlinebreaks", "testdata/writefile/expect3"},
 	}
 	for _, tt := range tests {
+		os.Remove(tt.path)
 		t.Run(tt.name, func(t *testing.T) {
 			WriteFile(tt.path, tt.data)
 			if !deepCompareFiles(tt.path, tt.want) {

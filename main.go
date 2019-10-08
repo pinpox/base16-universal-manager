@@ -15,8 +15,8 @@ var configFile string
 var (
 	updateFlag         = kingpin.Flag("update-list", "Update the list of templates and colorschemes").Bool()
 	clearListFlag      = kingpin.Flag("clear-list", "Delete local master list caches").Bool()
-	clearSchemesFlag   = kingpin.Flag("clear-templates", "Delete local scheme caches").Bool()
-	clearTemplatesFlag = kingpin.Flag("clear-schemes", "Delete local template caches").Bool()
+	clearTemplatesFlag = kingpin.Flag("clear-templates", "Delete local scheme caches").Bool()
+	clearSchemesFlag   = kingpin.Flag("clear-schemes", "Delete local template caches").Bool()
 	configFileFlag     = kingpin.Flag("config", "Specify configuration file to use").Default("config.yaml").String()
 )
 
