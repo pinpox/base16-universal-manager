@@ -36,7 +36,7 @@ func TestSetterConfig_Show(t *testing.T) {
 		TemplatesCachePath string
 		DryRun             bool
 		Colorscheme        string
-		Applications       map[string]StetterAppConfig
+		Applications       map[string]SetterAppConfig
 	}
 	tests := []struct {
 		name   string
