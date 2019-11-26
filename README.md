@@ -92,8 +92,9 @@ If you get errors on missing dependencies, install them as usual with `go get`.
 ## Usage
 
 To run, just execute the application without any command line flags. It will
-expect a config.yaml (example provided) in the same directory and render all
-specified application templates with the selected colorscheme.
+expect a config.yaml (example provided) in `$XDG_CONFIG_HOME/.config/base16-universal-manager/`
+(`$XDG_CONFIG_HOME` defaults to `~/.config` on \*nix systems if unspecified) and
+renders all specified application templates with the selected colorscheme.
 
 The following flags are planned and will be implemented soon:
 ```
@@ -131,10 +132,6 @@ consists mainly of two parts:
 | ---|---|---|
 | GithubToken |  set-your-token-here | see `GitHub Token (optinonal)`|
 | Colorscheme |  flat.yml | The colorscheme to use |
-| SchemesListFile |  cache/schemeslist.yaml | cache file for the list of Colorschemes|
-| TemplatesListFile |  cache/templateslist.yaml | Cache file for the list of templates |
-| SchemesCachePath |  cache/schemes/ | Colorschemes cache directory| 
-| TemplatesCachePath |  cache/templates/ | Templates cache directory |
 | DryRun |  false | Print the rendered files to stdout instead of saving them|
 
 The provided theme names, do not have to be exact.

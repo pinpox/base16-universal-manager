@@ -8,39 +8,58 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// SetterConfig is the applicaton's configuration.
 type SetterConfig struct {
-	GithubToken        string                      `yaml:"GithubToken"`
-	SchemesMasterURL   string                      `yaml:"SchemesMasterURL"`
-	TemplatesMasterURL string                      `yaml:"TemplatesMasterURL"`
-	SchemesListFile    string                      `yaml:"SchemesListFile"`
-	TemplatesListFile  string                      `yaml:"TemplatesListFile"`
-	SchemesCachePath   string                      `yaml:"SchemesCachePath"`
-	TemplatesCachePath string                      `yaml:"TemplatesCachePath"`
-	DryRun             bool                        `yaml:"DryRun"`
-	Colorscheme        string                      `yaml:"Colorscheme"`
-	Applications       map[string]StetterAppConfig `yaml:"applications"`
+	GithubToken        string                     `yaml:"GithubToken"`
+	SchemesMasterURL   string                     `yaml:"SchemesMasterURL"`
+	TemplatesMasterURL string                     `yaml:"TemplatesMasterURL"`
+	DryRun             bool                       `yaml:"DryRun"`
+	Colorscheme        string                     `yaml:"Colorscheme"`
+	Applications       map[string]SetterAppConfig `yaml:"applications"`
+	SchemesCachePath   string
+	SchemesListFile    string
+	TemplatesCachePath string
+	TemplatesListFile  string
 }
 
-type StetterAppConfig struct {
+// SetterAppConfig is the configuration for a particular application being themed.
+type SetterAppConfig struct {
 	Enabled bool              `yaml:"enabled"`
 	Hook    string            `yaml:"hook"`
 	Mode    string            `yaml:"mode"`
 	Files   map[string]string `yaml:"files"`
 }
 
+// NewConfig parses the provided configuration file and returns the app configuration.
 func NewConfig(path string) SetterConfig {
+	if path == "" {
+		fmt.Fprintf(os.Stderr, "no config file found\n")
+		os.Exit(1)
+	}
+
 	var conf SetterConfig
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
-
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		os.Exit(1)
 	}
 	check(err)
 	err = yaml.Unmarshal((file), &conf)
 	check(err)
+
+	conf.SchemesCachePath = xdgDirs.CacheHome() + "/schemes/"
+	conf.SchemesListFile = xdgDirs.CacheHome() + "/schemeslist.yaml"
+	conf.TemplatesCachePath = xdgDirs.CacheHome() + "/templates/"
+	conf.TemplatesListFile = xdgDirs.CacheHome() + "/templateslist.yaml"
+
+	// Create cache paths, if missing
+	os.MkdirAll(conf.SchemesCachePath, os.ModePerm)
+	os.MkdirAll(conf.TemplatesCachePath, os.ModePerm)
+
 	return conf
 }
+
+// Show prints the app configuration
 func (c SetterConfig) Show() {
 	fmt.Println("GithubToken: ", c.GithubToken)
 	fmt.Println("SchemesListFile: ", c.SchemesListFile)
@@ -57,7 +76,4 @@ func (c SetterConfig) Show() {
 			fmt.Println("      ", k, "  ", v)
 		}
 	}
-}
-
-type Application1 struct {
 }
