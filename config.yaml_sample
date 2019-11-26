@@ -1,5 +1,5 @@
 ---
-# Get a toke at https://github.com/settings/tokens/new improve rate limit
+# Get a token at https://github.com/settings/tokens/new to improve rate limit
 GithubToken: ""
 # Set the URL for the Schemes master list
 SchemesMasterURL: "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
@@ -7,19 +7,26 @@ SchemesMasterURL: "https://raw.githubusercontent.com/chriskempson/base16-schemes
 TemplatesMasterURL: "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
 # Select a colorscheme you want to use
 Colorscheme: "flat.yaml"
-
-# Enalbe/Disable dry-run. If enabled no configs will be altered
+# Location where the avaitible colorschemes will be cached
+SchemesListFile: "cache/schemeslist.yaml"
+# Location where the avaitible templates will be cached
+TemplatesListFile: "cache/templateslist.yaml"
+# Location to cache the actual colorschemes
+SchemesCachePath: "cache/schemes/"
+# Location to cache the actual templates
+TemplatesCachePath: "cache/templates/"
+# Enable/Disable dry-run. If enabled no configs will be altered
 DryRun: true
 # Set the applications templates you want to render to true
 applications:
     alacritty:
         # Enable or disable allacritty
         enabled: false
-		# Set mode of operation for creating the config file rewrite/append/replace
-		# rewrite: delete the contents of the output file, write the rendered output to it
-		# append: append the renderend output to the output file
-		# replace: search for a marked block and replace it. Will create a marked block if none is present
-	    mode: rewrite
+        # Set mode of operation for creating the config file rewrite/append/replace
+        # rewrite: delete the contents of the output file, write the rendered output to it
+        # append: append the renderend output to the output file
+        # replace: search for a marked block and replace it. Will create a marked block if none is present
+        mode: rewrite
         # Set a hook to run after rendering the template
         hook: ""
         # Specify where to output the rendered result
@@ -27,271 +34,271 @@ applications:
             #default: ~/.alacritty.yml
     binary-ninja:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     blink:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     c_header:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     concfg:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     conemu:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     console2:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     crosh:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     dunst:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     emacs:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     fzf:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     gnome-terminal:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     godot:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     gtk2:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     highlight:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     html-preview:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     i3:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     i3status-rust:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     iterm2:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     jetbrains:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     joe:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     kakoune:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     kitty:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     konsole:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     mintty:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     monodevelop:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     prism:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     prompt-toolkit:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     putty:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     pygments:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     pywal:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     qtcreator:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     qutebrowser:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     radare2:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     rofi:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     shell:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     scide:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     st:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     stumpwm:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     styles:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     telegram-desktop:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     termite:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     termux:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     textmate:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     tmux:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     tilix:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     vim:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     vis:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     vscode:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     windows-command-prompt:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     xcode:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     xfce4-terminal:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     xresources:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     xshell:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
     zathura:
         enabled: false
-	    mode: rewrite
+        mode: rewrite
         hook: ""
         files:
