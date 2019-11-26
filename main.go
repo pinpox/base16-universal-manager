@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-
 	"github.com/OpenPeeDeeP/xdg"
 	"github.com/hoisie/mustache"
 	"gopkg.in/alecthomas/kingpin.v2"
@@ -48,15 +47,16 @@ func main() {
 	scheme := schemeList.Find(appConf.Colorscheme)
 	fmt.Println("[CONFIG]: Selected scheme: ", scheme.Name)
 
-	for k := range appConf.Applications {
+	templateEnabled := false
+	for app, appConfig := range appConf.Applications {
+		if appConfig.Enabled {
+			Base16Render(templateList.Find(app), scheme)
+			templateEnabled = true
+		}
+	}
 
-		schemeList = LoadBase16ColorschemeList()
-		templateList = LoadBase16TemplateList()
-
-		templ := templateList.Find(k)
-
-		Base16Render(templ, scheme)
-
+	if !templateEnabled {
+		fmt.Println("No templates enabled")
 	}
 
 }

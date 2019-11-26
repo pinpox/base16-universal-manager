@@ -68,12 +68,12 @@ func (c SetterConfig) Show() {
 	fmt.Println("TemplatesCachePath: ", c.TemplatesCachePath)
 	fmt.Println("DryRun: ", c.DryRun)
 
-	for k, v := range c.Applications {
-		fmt.Println("  App: ", k)
-		fmt.Println("    Enabled: ", v.Enabled)
-		fmt.Println("    Hook: ", v.Hook)
-		for k1, v1 := range v.Files {
-			fmt.Println("      ", k1, "  ", v1)
+	for app, appConfig := range c.Applications {
+		fmt.Println("  App: ", app)
+		fmt.Println("    Enabled: ", appConfig.Enabled)
+		fmt.Println("    Hook: ", appConfig.Hook)
+		for k, v := range appConfig.Files {
+			fmt.Println("      ", k, "  ", v)
 		}
 	}
 }
