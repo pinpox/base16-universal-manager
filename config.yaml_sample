@@ -15,7 +15,7 @@ TemplatesListFile: "cache/templateslist.yaml"
 SchemesCachePath: "cache/schemes/"
 # Location to cache the actual templates
 TemplatesCachePath: "cache/templates/"
-# Enalbe/Disable dry-run. If enabled no configs will be altered
+# Enable/Disable dry-run. If enabled no configs will be altered
 DryRun: true
 # Set the applications templates you want to render to true
 applications:
