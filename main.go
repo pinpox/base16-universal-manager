@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
 	"github.com/OpenPeeDeeP/xdg"
 	"github.com/hoisie/mustache"
 	"gopkg.in/alecthomas/kingpin.v2"
@@ -21,6 +22,7 @@ var (
 	clearTemplatesFlag = kingpin.Flag("clear-templates", "Delete local scheme caches").Bool()
 	clearSchemesFlag   = kingpin.Flag("clear-schemes", "Delete local template caches").Bool()
 	configFileFlag     = kingpin.Flag("config", "Specify configuration file to use").Default(xdgDirs.QueryConfig("config.yaml")).String()
+	printConfigFlag    = kingpin.Flag("print-config", "Print current configuration").Bool()
 )
 
 //Configuration
@@ -28,11 +30,14 @@ var appConf SetterConfig
 
 func main() {
 	//Parse Flags
-	kingpin.Version("1.1.0")
+	kingpin.Version("0.0.0")
 	kingpin.Parse()
 
 	appConf = NewConfig(*configFileFlag)
-	// appConf.Show()
+
+	if *printConfigFlag {
+		appConf.Show()
+	}
 
 	//TODO delete caches, if user wants to
 
