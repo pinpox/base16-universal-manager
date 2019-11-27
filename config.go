@@ -52,10 +52,6 @@ func NewConfig(path string) SetterConfig {
 	conf.TemplatesCachePath = xdgDirs.CacheHome() + "/templates/"
 	conf.TemplatesListFile = xdgDirs.CacheHome() + "/templateslist.yaml"
 
-	// Create cache paths, if missing
-	os.MkdirAll(conf.SchemesCachePath, os.ModePerm)
-	os.MkdirAll(conf.TemplatesCachePath, os.ModePerm)
-
 	return conf
 }
 
