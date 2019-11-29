@@ -101,6 +101,8 @@ func main() {
 
 }
 
+// Base16Render takes an application-specific template and renders a config file
+// implementing the provided colorscheme.
 func Base16Render(templ Base16Template, scheme Base16Colorscheme) {
 
 	fmt.Println("[RENDER]: Rendering template \"" + templ.Name + "\"")

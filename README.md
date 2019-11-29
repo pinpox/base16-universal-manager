@@ -8,7 +8,7 @@
 
 ## About
 ### Base16 Universal Manager
-Gets a [base16](https://github.com/chriskempson/base16) colorscheme the configured templates from the official repos and renders them out to the given locatinos
+Gets a [base16](https://github.com/chriskempson/base16) colorscheme the configured templates from the official repos and renders them out to the given locations
 TODO
 TODO: comment about levenstein?
 
@@ -144,7 +144,7 @@ partly remember the name of a particular scheme, if you made a typo, or if you a
 
 #### Applications which you want to theme
 The rest of the configuration are the application specific settings. It consists
-of a list of applicions you want to use. Here is an example that would set up
+of a list of applications you want to use. Here is an example that would set up
 vim and i3 for you:
 
 ```
