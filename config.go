@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v2"
 )
@@ -47,10 +48,10 @@ func NewConfig(path string) SetterConfig {
 	err = yaml.Unmarshal((file), &conf)
 	check(err)
 
-	conf.SchemesCachePath = xdgDirs.CacheHome() + "/schemes/"
-	conf.SchemesListFile = xdgDirs.CacheHome() + "/schemeslist.yaml"
-	conf.TemplatesCachePath = xdgDirs.CacheHome() + "/templates/"
-	conf.TemplatesListFile = xdgDirs.CacheHome() + "/templateslist.yaml"
+	conf.SchemesCachePath = filepath.Join(xdgDirs.CacheHome(), "schemes")
+	conf.SchemesListFile = filepath.Join(xdgDirs.CacheHome(), "schemeslist.yaml")
+	conf.TemplatesCachePath = filepath.Join(xdgDirs.CacheHome(), "templates")
+	conf.TemplatesListFile = filepath.Join(xdgDirs.CacheHome(), "templateslist.yaml")
 
 	return conf
 }
