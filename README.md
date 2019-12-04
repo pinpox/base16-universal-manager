@@ -9,8 +9,7 @@
 ## About
 ### Base16 Universal Manager
 Gets a [base16](https://github.com/chriskempson/base16) colorscheme the configured templates from the official repos and renders them out to the given locations
-TODO
-TODO: comment about levenstein?
+It will use the [levenstein distance](https://en.wikipedia.org/wiki/Levenshtein_distance) to find the matching colorscheme from the supplied name.
 
 ### Base16 themes
 An architecture for building themes based on carefully chosen syntax
