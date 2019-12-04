@@ -8,7 +8,7 @@
 
 ## About
 ### Base16 Universal Manager
-Gets a [base16](https://github.com/chriskempson/base16) colorscheme the configured templates from the official repos and renders them out to the given locatinos
+Gets a [base16](https://github.com/chriskempson/base16) colorscheme the configured templates from the official repos and renders them out to the given locations
 TODO
 TODO: comment about levenstein?
 
@@ -55,7 +55,7 @@ not theme or template maintainers and desigend to only get and build the stuff
 the user really needs.
 
 #### Similar projects
-[base16-shell]() A shell script to change your shell's default ANSI colors
+[base16-shell](https://github.com/chriskempson/base16-shell) A shell script to change your shell's default ANSI colors
 
 I liked the idea, but it limits the use to command line applications.
 Also I found the script to be to slow on my system, which results in the colors
@@ -63,7 +63,7 @@ of new terminals been changed about ~0.5s after start. In the meantime my
 terminal waits. There probably are usecases, where this is the better choice,
 but it was not what I was looking for.
 
-[base16-manager]() A command line tool to install base16 templates and set themes globally.
+[base16-manager](https://github.com/base16-manager/base16-manager) A command line tool to install base16 templates and set themes globally.
 
 Even though this project aimed to provide the same funcionality, only very few
 applications are supported. Also it required me to download a lot of repos I
@@ -144,7 +144,7 @@ partly remember the name of a particular scheme, if you made a typo, or if you a
 
 #### Applications which you want to theme
 The rest of the configuration are the application specific settings. It consists
-of a list of applicions you want to use. Here is an example that would set up
+of a list of applications you want to use. Here is an example that would set up
 vim and i3 for you:
 
 ```

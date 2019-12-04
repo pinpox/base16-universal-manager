@@ -7,14 +7,7 @@ SchemesMasterURL: "https://raw.githubusercontent.com/chriskempson/base16-schemes
 TemplatesMasterURL: "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
 # Select a colorscheme you want to use
 Colorscheme: "flat.yaml"
-# Location where the avaitible colorschemes will be cached
-SchemesListFile: "cache/schemeslist.yaml"
-# Location where the avaitible templates will be cached
-TemplatesListFile: "cache/templateslist.yaml"
-# Location to cache the actual colorschemes
-SchemesCachePath: "cache/schemes/"
-# Location to cache the actual templates
-TemplatesCachePath: "cache/templates/"
+
 # Enable/Disable dry-run. If enabled no configs will be altered
 DryRun: true
 # Set the applications templates you want to render to true
