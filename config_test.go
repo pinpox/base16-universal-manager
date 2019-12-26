@@ -1,6 +1,8 @@
 package main
 
 import (
+	"io/ioutil"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -60,5 +62,25 @@ func TestSetterConfig_Show(t *testing.T) {
 			}
 			c.Show()
 		})
+	}
+}
+
+func TestDefaultMasterURLs(t *testing.T) {
+	// Create a temporary, empty config file
+	tmpFile, err := ioutil.TempFile(os.TempDir(), "base16-universal-manager-")
+	if err != nil {
+		t.Fatalf("Cannot create temporary file\n")
+	}
+	if err := tmpFile.Close(); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(tmpFile.Name())
+
+	config := NewConfig(tmpFile.Name())
+	if config.SchemesMasterURL == "" {
+		t.Fatalf("SchemesMasterURL should default to %s\n", defaultSchemesMasterURL)
+	}
+	if config.TemplatesMasterURL == "" {
+		t.Fatalf("TemplatesMasterURL should default to %s\n", defaultTemplatesMasterURL)
 	}
 }

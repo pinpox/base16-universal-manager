@@ -9,6 +9,9 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+var defaultSchemesMasterURL = "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
+var defaultTemplatesMasterURL = "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
+
 // SetterConfig is the applicaton's configuration.
 type SetterConfig struct {
 	GithubToken        string                     `yaml:"GithubToken"`
@@ -47,6 +50,13 @@ func NewConfig(path string) SetterConfig {
 	check(err)
 	err = yaml.Unmarshal((file), &conf)
 	check(err)
+
+	if conf.SchemesMasterURL == "" {
+		conf.SchemesMasterURL = defaultSchemesMasterURL
+	}
+	if conf.TemplatesMasterURL == "" {
+		conf.TemplatesMasterURL = defaultTemplatesMasterURL
+	}
 
 	conf.SchemesCachePath = filepath.Join(xdgDirs.CacheHome(), "schemes")
 	conf.SchemesListFile = filepath.Join(xdgDirs.CacheHome(), "schemeslist.yaml")
