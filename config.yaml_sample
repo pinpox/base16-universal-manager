@@ -1,12 +1,12 @@
 ---
 # Get a token at https://github.com/settings/tokens/new to improve rate limit
 GithubToken: ""
-# Set the URL for the Schemes master list
-SchemesMasterURL: "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
-# Set the URL for the Templates master list
-TemplatesMasterURL: "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
 # Select a colorscheme you want to use
 Colorscheme: "flat.yaml"
+
+# Scheme and template list URLs default to the following but can be overridden if you wish
+#SchemesMasterURL: "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
+#TemplatesMasterURL: "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
 
 # Enable/Disable dry-run. If enabled no configs will be altered
 DryRun: true

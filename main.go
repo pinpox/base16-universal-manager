@@ -30,7 +30,7 @@ var appConf SetterConfig
 
 func main() {
 	//Parse Flags
-	kingpin.Version("0.2.0")
+	kingpin.Version("0.2.1")
 	kingpin.Parse()
 
 	appConf = NewConfig(*configFileFlag)
