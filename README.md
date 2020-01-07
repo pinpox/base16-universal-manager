@@ -77,6 +77,7 @@ distributions and pre-build binaries in the future.
 
 ### Install directly
 ```
+mkdir -p "$(go env GOPATH)/src"
 go install github.com/binaryplease/base16-universal-manager
 ```
 ### Get source and build manually
@@ -97,7 +98,7 @@ renders all specified application templates with the selected colorscheme.
 
 The following flags are planned and will be implemented soon:
 ```
-usage: base16-setter [<flags>]
+usage: base16-universal-manager [<flags>]
 
 Flags:
   --help             Show context-sensitive help (also try --help-long and --help-man).
