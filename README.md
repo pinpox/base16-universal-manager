@@ -153,12 +153,18 @@ applications:
     enabled: true
     hook: i3-msg 'restart'
     files:
-      default: "~/.i3/i3_colors"
-      bar-colors: "~/.i3/i3_bar_colors"
+      default:
+        path: ~/.i3/i3_colors/
+        mode: rewrite
+      bar-colors:
+        path: ~/.i3/i3_bar_colors/
+        mode: rewrite
   vim:
     enabled: true
     files:
-      default: "~/.vim/vim_colors"
+      default:
+        path: ~/.vim/vim_colors/
+        mode: rewrite
 ```
 
 In this configuration we render the files called `default` and `bar-colors` from
@@ -168,6 +174,35 @@ well as the file called `default` from the [base16-vim templates
 repo](https://github.com/chriskempson/base16-vim/tree/master/templates) to
 `~/.vim/vim_colors`. In the configurations of those applications you could then
 source that generated files.
+
+Note: the convention for `path` is that if it ends with a `/` the rendered file will
+be placed in the directory `path` (it will be created if it doesn't exist).
+If it doesn't end with a `/` then `path` specifies exactly where the renered file
+should be placed. For example the above config will create/rewrite the following files:
+
+ - ~/.i3/i3_colors/default.config
+ - ~/.i3/i3_bar_colors/bar-colors.config
+ - ~/.vim/vim_colors/default.vim
+
+Some applications have limitations in their configuration files and cannot source
+other configuration files. In that case rewriting the file won't help. That's why
+there is another mode called `replace`. Here's an example config demonstating this:
+
+```
+applications:
+  alacritty:
+    enabled: true
+    files:
+      default:
+        path: ~/.config/alacritty/alacritty.yml
+        mode: replace
+        start_marker: "# <<<<<<<<<<"
+        end_marker: "# >>>>>>>>>>"
+```
+
+With this configuration the rendered colors will be placed between the lines `# <<<<<<<<<<`
+and `# >>>>>>>>>>` in `~/.config/alacritty/alacritty.yml`. Note that `start_marker` and
+`end_marker` are regexes and do not have to match exactly.
 
 The `hook` variable can be set for every application configured. It allows to
 run a command after the files have been rendererd, e.g. to refersh the
@@ -189,4 +224,3 @@ Issues, bug-reports, pull requests or ideas for features and improvements are
 **very welcome**. Also it would be great if users of specific applications can
 document the usage of their respective templates, as I don't use all of them and
 can't/won't test the integration for every single application.
-

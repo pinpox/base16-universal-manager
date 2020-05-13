@@ -33,3 +33,4 @@ cache
 out
 base16-universal-manager
 config.yaml
+testdata/output*

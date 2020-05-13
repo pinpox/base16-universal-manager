@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"reflect"
 	"testing"
@@ -132,36 +133,44 @@ func TestWriteFile(t *testing.T) {
 	tests := []struct {
 		name string
 		path string
-		data string
+		data []byte
 		want string
 	}{
-		{"Write simple string", "testdata/output1", "A simple string", "testdata/writefile/expect1"},
-		{"Write emtpy string", "testdata/output2", "", "testdata/writefile/expect2"},
-		{"Write string with linebreaks", "testdata/output3", "A string\nwith \nlinebreaks", "testdata/writefile/expect3"},
-		{"Re-Write string with linebreaks", "testdata/output4", "A string\nwith \nlinebreaks", "testdata/writefile/expect3"},
+		{
+			name: "Write simple string",
+			path: "testdata/output1",
+			data: []byte("A simple string"),
+			want: "testdata/writefile/expect1",
+		},
+		{
+			name: "Write emtpy string",
+			path: "testdata/output2",
+			data: []byte(""),
+			want: "testdata/writefile/expect2",
+		},
+		{
+			name: "Write string with linebreaks",
+			path: "testdata/output3",
+			data: []byte("A string\nwith \nlinebreaks"),
+			want: "testdata/writefile/expect3",
+		},
+		{
+			name: "Re-Write string with linebreaks",
+			path: "testdata/output4",
+			data: []byte("A string\nwith \nlinebreaks"),
+			want: "testdata/writefile/expect3",
+		},
 	}
 	for _, tt := range tests {
 		os.Remove(tt.path)
 		t.Run(tt.name, func(t *testing.T) {
-			WriteFile(tt.path, tt.data)
-			if !deepCompareFiles(tt.path, tt.want) {
-				t.Errorf("WriteFile() \"%v\" files differ", tt.name)
+			err := WriteFile(tt.path, tt.data)
+			if err != nil {
+				t.Errorf("Error during WriteFile() %q: %q", tt.name, err.Error())
 			}
-		})
-	}
-}
-
-func TestAppendFile(t *testing.T) {
-	tests := []struct {
-		name string
-		path string
-		data string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			AppendFile(tt.path, tt.data)
+			if !deepCompareFiles(tt.path, tt.want) {
+				t.Errorf("WriteFile() %q files differ", tt.name)
+			}
 		})
 	}
 }
@@ -171,18 +180,34 @@ func TestReplaceMultiline(t *testing.T) {
 	}
 	tests := []struct {
 		name        string
-		input       string
+		path        string
 		replacement string
 		blockStart  string
 		blockEnd    string
 		want        string
 	}{
-		// TODO: Add test cases.
+		{
+			name:        "full example",
+			path:        "testdata/replacefile/input1",
+			replacement: "qux\n",
+			blockStart:  "beginmarker",
+			blockEnd:    "endmarker",
+			want:        "testdata/replacefile/expect1",
+		},
+		// TODO: Add more test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ReplaceMultiline(tt.input, tt.replacement, tt.blockStart, tt.blockEnd); got != tt.want {
-				t.Errorf("ReplaceMultiline() = %v, want %v", got, tt.want)
+			// simple way to copy input file into one that can be tested with
+			// since ReplaceMultiline will overwrite the file in-place
+			exe_cmd(fmt.Sprintf("cp %s testdata/output1", tt.path))
+
+			err := ReplaceMultiline("testdata/output1", tt.replacement, tt.blockStart, tt.blockEnd)
+			if err != nil {
+				t.Errorf("Error during ReplaceMultiline() %q: %q", tt.name, err.Error())
+			}
+			if !deepCompareFiles("testdata/output1", tt.want) {
+				t.Errorf("ReplaceMultiline() %q files differ", tt.name)
 			}
 		})
 	}
