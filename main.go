@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/user"
 	"path/filepath"
+	"strings"
 
 	"github.com/OpenPeeDeeP/xdg"
 	"github.com/hoisie/mustache"
@@ -30,7 +32,7 @@ var appConf SetterConfig
 
 func main() {
 	//Parse Flags
-	kingpin.Version("0.2.1")
+	kingpin.Version("1.0.0")
 	kingpin.Parse()
 
 	appConf = NewConfig(*configFileFlag)
@@ -90,7 +92,10 @@ func main() {
 	templateEnabled := false
 	for app, appConfig := range appConf.Applications {
 		if appConfig.Enabled {
-			Base16Render(templateList.Find(app), scheme)
+			err := Base16Render(templateList.Find(app), scheme)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error when rendering file: %v\n", err)
+			}
 			templateEnabled = true
 		}
 	}
@@ -103,36 +108,41 @@ func main() {
 
 // Base16Render takes an application-specific template and renders a config file
 // implementing the provided colorscheme.
-func Base16Render(templ Base16Template, scheme Base16Colorscheme) {
-
+func Base16Render(templ Base16Template, scheme Base16Colorscheme) error {
 	fmt.Println("[RENDER]: Rendering template \"" + templ.Name + "\"")
 
 	for k, v := range templ.Files {
 		templFileData, err := DownloadFileToStirng(templ.RawBaseURL + "templates/" + k + ".mustache")
-		check(err)
+		if err != nil {
+			return fmt.Errorf("could not download template file: %w", err)
+		}
 		renderedFile := mustache.Render(templFileData, scheme.MustacheContext())
 
-		saveBasePath := appConf.Applications[templ.Name].Files[k] + "/"
-		p4 := filepath.Join(".", saveBasePath)
-		os.MkdirAll(p4, os.ModePerm)
-		savePath := saveBasePath + k + v.Extension
+		savePath, err := getSavePath(appConf.Applications[templ.Name].Files[k].Path, k+v.Extension)
+		if err != nil {
+			return fmt.Errorf("could not get location for save path: %w", err)
+		}
+		if savePath == "" {
+			continue
+		}
 
 		//If DryRun is enabled, just print the output location for debugging
 		if appConf.DryRun {
 			fmt.Println("    - (dryrun) file would be written to: ", savePath)
 		} else {
-			switch appConf.Applications[templ.Name].Mode {
+			switch appConf.Applications[templ.Name].Files[k].Mode {
 			case "rewrite":
 				fmt.Println("     - writing: ", savePath)
-				saveFile, err := os.Create(savePath)
-				defer saveFile.Close()
-				check(err)
-				saveFile.Write([]byte(renderedFile))
-				saveFile.Close()
-			case "append":
-				fmt.Println("     - appending to: ", savePath)
+				if err = WriteFile(savePath, []byte(renderedFile)); err != nil {
+					return err
+				}
 			case "replace":
 				fmt.Println("     - replacing in: ", savePath)
+				startMarker := appConf.Applications[templ.Name].Files[k].StartMarker
+				endMarker := appConf.Applications[templ.Name].Files[k].EndMarker
+				if err = ReplaceMultiline(savePath, renderedFile, startMarker, endMarker); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -142,6 +152,44 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme) {
 	} else {
 		exe_cmd(appConf.Applications[templ.Name].Hook)
 	}
+
+	return nil
+}
+
+func getSavePath(path, defaultFilename string) (string, error) {
+	if path == "" {
+		return "", nil
+	}
+
+	var homeDir string
+	if path[0] == '~' {
+		usr, err := user.Current()
+		if err != nil {
+			return "", fmt.Errorf("could not get user home directory: %w", err)
+		}
+		homeDir = usr.HomeDir
+	}
+
+	var savePath string
+	if path == "~" {
+		savePath = homeDir
+	} else if strings.HasPrefix(path, "~/") {
+		savePath = filepath.Join(homeDir, path[2:])
+	} else if path[0] != '/' {
+		savePath = filepath.Join(".", path)
+	} else {
+		savePath = path
+	}
+
+	if strings.HasSuffix(path, "/") {
+		err := os.MkdirAll(savePath, os.ModePerm)
+		if err != nil {
+			return "", fmt.Errorf("could not create folder: %w", err)
+		}
+		savePath = filepath.Join(savePath, defaultFilename)
+	}
+
+	return savePath, nil
 }
 
 //TODO proper error handling
@@ -149,5 +197,4 @@ func check(e error) {
 	if e != nil {
 		panic(e)
 	}
-
 }

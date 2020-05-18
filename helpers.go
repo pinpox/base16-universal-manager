@@ -151,25 +151,83 @@ func exe_cmd(cmd string) {
 	fmt.Printf("%s\n", out)
 }
 
-func WriteFile(path string, data string) {
-	f, err := os.Create(path)
-	defer f.Close()
-	check(err)
-	f.Write([]byte(data))
-	f.Close()
+func WriteFile(path string, contents []byte) error {
+	file, err := os.Create(path)
+	if err != nil {
+		return fmt.Errorf("could not open file %q: %w", path, err)
+	}
+	defer file.Close()
+
+	if _, err = file.Write(contents); err != nil {
+		return fmt.Errorf("could not write in file %q: %w", path, err)
+	}
+
+	if err = file.Sync(); err != nil {
+		return fmt.Errorf("could not flush file contents %q: %w", path, err)
+	}
+
+	return nil
 }
 
-func AppendFile(path string, data string) {
-	f, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0600)
-	check(err)
-	defer f.Close()
-	_, err = f.WriteString(data)
-	check(err)
+func ReplaceMultiline(filepath, replaceContents, startMarker, endMarker string) error {
+	if startMarker == "" {
+		return fmt.Errorf("start marker regular expression cannot be empty if file mode is replace")
+	}
+	if endMarker == "" {
+		return fmt.Errorf("end marker regular expression cannot be empty if file mode is replace")
+	}
+	startMarkerRegex, err := regexp.Compile(startMarker)
+	if err != nil {
+		return fmt.Errorf("invalid start marker regular expression: %w", err)
+	}
+	endMarkerRegex, err := regexp.Compile(endMarker)
+	if err != nil {
+		return fmt.Errorf("invalid end marker regular expression: %w", err)
+	}
+	newContents, err := getReplacedContents(filepath, replaceContents, startMarkerRegex, endMarkerRegex)
+	if err != nil {
+		return fmt.Errorf("could not replace in file %q: %w", filepath, err)
+	}
+	return WriteFile(filepath, newContents)
 }
 
-func ReplaceMultiline(input string, replacement string, blockStart, blockEnd string) string {
-	r := regexp.MustCompile("(?s)" + blockStart + ".*" + blockEnd)
-	return blockStart + r.ReplaceAllString(input, replacement) + blockEnd
+func getReplacedContents(filepath, replaceContents string, startMarkerRegex, endMarkerRegex *regexp.Regexp) ([]byte, error) {
+	file, err := os.Open(filepath)
+	if err != nil {
+		return nil, fmt.Errorf("could not open %q: %w", filepath, err)
+	}
+	var buffer bytes.Buffer
+	var startFound, endFound bool
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Bytes()
+		if !startFound && startMarkerRegex.Match(line) {
+			startFound = true
+			buffer.Write(line)
+			buffer.WriteString("\n")
+			buffer.Write([]byte(replaceContents))
+		} else if !startFound {
+			buffer.Write(line)
+			buffer.WriteString("\n")
+		} else if !endFound && endMarkerRegex.Match(line) {
+			endFound = true
+			buffer.Write(line)
+			buffer.WriteString("\n")
+		} else if startFound && endFound {
+			buffer.Write(line)
+			buffer.WriteString("\n")
+		}
+	}
+	if err = scanner.Err(); err != nil {
+		return nil, fmt.Errorf("could not read file %q: %w", filepath, err)
+	}
+	if !startFound {
+		return nil, fmt.Errorf("could not find a line matching start_marker regex in %q", filepath)
+	}
+	if !endFound {
+		return nil, fmt.Errorf("could not find a line matching end_marker regex in %q", filepath)
+	}
+	return buffer.Bytes(), nil
 }
 
 func deepCompareFiles(file1, file2 string) bool {

@@ -28,10 +28,17 @@ type SetterConfig struct {
 
 // SetterAppConfig is the configuration for a particular application being themed.
 type SetterAppConfig struct {
-	Enabled bool              `yaml:"enabled"`
-	Hook    string            `yaml:"hook"`
-	Mode    string            `yaml:"mode"`
-	Files   map[string]string `yaml:"files"`
+	Enabled bool                  `yaml:"enabled"`
+	Hook    string                `yaml:"hook"`
+	Files   map[string]FileConfig `yaml:"files"`
+}
+
+// FileConfig is the configuration for how a particular file should be rendered
+type FileConfig struct {
+	Path        string `yaml:"path"`
+	Mode        string `yaml:"mode"`
+	StartMarker string `yaml:"start_marker"`
+	EndMarker   string `yaml:"end_marker"`
 }
 
 // NewConfig parses the provided configuration file and returns the app configuration.
@@ -47,8 +54,7 @@ func NewConfig(path string) SetterConfig {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		os.Exit(1)
 	}
-	check(err)
-	err = yaml.Unmarshal((file), &conf)
+	err = yaml.Unmarshal(file, &conf)
 	check(err)
 
 	if conf.SchemesMasterURL == "" {
