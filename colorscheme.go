@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"path"
 
 	"gopkg.in/yaml.v2"
 )
@@ -106,10 +107,10 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 		panic("Colorscheme name was empty")
 	}
 
-	path := appConf.SchemesCachePath + name
+	schemePath := path.Join(appConf.SchemesCachePath, name)
 
 	// Create local schemes file, if not present
-	if _, err := os.Stat(path); os.IsNotExist(err) {
+	if _, err := os.Stat(schemePath); os.IsNotExist(err) {
 
 		parts := strings.Split(l.colorschemes[name], "/")
 
@@ -119,7 +120,7 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 
 		schemeData, err := DownloadFileToStirng(yamlURL)
 		check(err)
-		saveFile, err := os.Create(path)
+		saveFile, err := os.Create(schemePath)
 		//TODO delete old file?
 		defer saveFile.Close()
 		check(err)
@@ -127,7 +128,7 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 		saveFile.Close()
 	}
 
-	colorscheme, err := ioutil.ReadFile(path)
+	colorscheme, err := ioutil.ReadFile(schemePath)
 	check(err)
 
 	return NewBase16Colorscheme(string(colorscheme)), err
