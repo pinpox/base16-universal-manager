@@ -113,7 +113,7 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 
 		parts := strings.Split(l.colorschemes[name], "/")
 
-		yamlURL := "https://raw.githubusercontent.com/" + parts[3] + "/" + parts[4] + "/master/" + parts[7]
+		yamlURL := strings.Join([]string{"https://raw.githubusercontent.com", parts[3], parts[4], parts[6], parts[7]}, "/")
 
 		fmt.Println("downloading theme from: ", yamlURL)
 
