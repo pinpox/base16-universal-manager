@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"path"
 )
 
 type Base16TemplateFile struct {
@@ -39,20 +40,20 @@ func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
 	newTemplate.RawBaseURL = "https://raw.githubusercontent.com/" + parts[3] + "/" + parts[4] + "/master/"
 	newTemplate.Name = name
 
-	path := appConf.TemplatesCachePath + name
+	templatePath := path.Join(appConf.TemplatesCachePath, name+".yaml")
 
 	// Create local template file, if not present
-	if _, err := os.Stat(path); os.IsNotExist(err) {
+	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
 		templateData, err := DownloadFileToStirng(newTemplate.RawBaseURL + "templates/config.yaml")
 		check(err)
-		saveFile, err := os.Create(path)
+		saveFile, err := os.Create(templatePath)
 		//TODO delete old file?
 		defer saveFile.Close()
 		saveFile.Write([]byte(templateData))
 		saveFile.Close()
 	}
 
-	template, err := ioutil.ReadFile(path)
+	template, err := ioutil.ReadFile(templatePath)
 	check(err)
 
 	//TODO cache actual templates
