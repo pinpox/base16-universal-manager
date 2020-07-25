@@ -1,7 +1,7 @@
-[![Build Status](https://api.travis-ci.org/binaryplease/base16-universal-manager.svg)](http://travis-ci.org/binaryplease/base16-universal-manager) [![GoDoc](https://godoc.org/github.com/binaryplease/base16-universal-manager?status.svg)](http://godoc.org/github.com/binaryplease/base16-universal-manager)
-[![Go Report Card](https://goreportcard.com/badge/github.com/binaryplease/base16-universal-manager)](https://goreportcard.com/report/github.com/binaryplease/base16-universal-manager)
-[![codecov](https://codecov.io/gh/binaryplease/base16-universal-manager/branch/master/graph/badge.svg)](https://codecov.io/gh/binaryplease/base16-universal-manager)
-[![HitCount](http://hits.dwyl.io/binaryplease/base16-universal-manager.svg)](http://hits.dwyl.io/binaryplease/base16-universal-manager)
+[![Build Status](https://api.travis-ci.org/pinpox/base16-universal-manager.svg)](http://travis-ci.org/pinpox/base16-universal-manager) [![GoDoc](https://godoc.org/github.com/pinpox/base16-universal-manager?status.svg)](http://godoc.org/github.com/pinpox/base16-universal-manager)
+[![Go Report Card](https://goreportcard.com/badge/github.com/pinpox/base16-universal-manager)](https://goreportcard.com/report/github.com/pinpox/base16-universal-manager)
+[![codecov](https://codecov.io/gh/pinpox/base16-universal-manager/branch/master/graph/badge.svg)](https://codecov.io/gh/pinpox/base16-universal-manager)
+[![HitCount](http://hits.dwyl.io/pinpox/base16-universal-manager.svg)](http://hits.dwyl.io/pinpox/base16-universal-manager)
 
 
 # ![Base16](logo.png)
@@ -78,12 +78,12 @@ distributions and pre-build binaries in the future.
 ### Install directly
 ```
 mkdir -p "$(go env GOPATH)/src"
-go install github.com/binaryplease/base16-universal-manager
+go install github.com/pinpox/base16-universal-manager
 ```
 ### Get source and build manually
 ```
-go get github.com/binaryplease/base16-universal-manager
-cd $GOPATH/src/github.com/binaryplease/base16-universal-manager
+go get github.com/pinpox/base16-universal-manager
+cd $GOPATH/src/github.com/pinpox/base16-universal-manager
 go build
 ```
 
@@ -211,7 +211,7 @@ application in order to show the new values. In this example we use `i3-msg
 
 ### Application examples
 Base16 Universal Manager can support all applications listed in the base16 repo.
-For application-specific integration examples see the [list in the wiki](https://github.com/binaryplease/base16-universal-manager/wiki/Configuration-examples)
+For application-specific integration examples see the [list in the wiki](https://github.com/pinpox/base16-universal-manager/wiki/Configuration-examples)
 
 
 ## Contributing
