@@ -35,9 +35,10 @@ type Base16Colorscheme struct {
 	RepoURL string
 
 	RawBaseURL string
+	FileName string
 }
 
-func (s Base16Colorscheme) MustacheContext() map[string]interface{} {
+func (s Base16Colorscheme) MustacheContext(ext string) map[string]interface{} {
 	var bases = map[string]string{
 		"00": s.Color00,
 		"01": s.Color01,
@@ -56,14 +57,11 @@ func (s Base16Colorscheme) MustacheContext() map[string]interface{} {
 		"0E": s.Color14,
 		"0F": s.Color15,
 	}
-
-	slug := "base16-test-slug"
+	slug := strings.Replace(strings.ToLower(s.FileName), " ", "-", -1) + ext
 	ret := map[string]interface{}{
 		"scheme-name":   s.Name,
 		"scheme-author": s.Author,
-		//TODO correct this slug
 		"scheme-slug": slug,
-
 		"scheme-slug-underscored": strings.Replace(slug, "-", "_", -1),
 	}
 
@@ -109,13 +107,13 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 
 	schemePath := path.Join(appConf.SchemesCachePath, name)
 
+
+	parts := strings.Split(l.colorschemes[name], "/")
+	yamlURL := strings.Join([]string{"https://raw.githubusercontent.com", parts[3], parts[4], parts[6], parts[7]}, "/")
 	// Create local schemes file, if not present
 	if _, err := os.Stat(schemePath); os.IsNotExist(err) {
 
-		parts := strings.Split(l.colorschemes[name], "/")
-
-		yamlURL := strings.Join([]string{"https://raw.githubusercontent.com", parts[3], parts[4], parts[6], parts[7]}, "/")
-
+		
 		fmt.Println("downloading theme from: ", yamlURL)
 
 		schemeData, err := DownloadFileToString(yamlURL)
@@ -131,7 +129,10 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 	colorscheme, err := ioutil.ReadFile(schemePath)
 	check(err)
 
-	return NewBase16Colorscheme(string(colorscheme)), err
+	scheme := NewBase16Colorscheme(string(colorscheme))
+	scheme.RawBaseURL = yamlURL
+	scheme.FileName = parts[7][:len(parts[7])-5]
+	return scheme, err
 
 }
 

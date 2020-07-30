@@ -116,7 +116,7 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme) error {
 		if err != nil {
 			return fmt.Errorf("could not download template file: %w", err)
 		}
-		renderedFile := mustache.Render(templFileData, scheme.MustacheContext())
+		renderedFile := mustache.Render(templFileData, scheme.MustacheContext(v.Extension))
 
 		savePath, err := getSavePath(appConf.Applications[templ.Name].Files[k].Path, k+v.Extension)
 		if err != nil {
