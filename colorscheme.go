@@ -118,7 +118,7 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 
 		fmt.Println("downloading theme from: ", yamlURL)
 
-		schemeData, err := DownloadFileToStirng(yamlURL)
+		schemeData, err := DownloadFileToString(yamlURL)
 		check(err)
 		saveFile, err := os.Create(schemePath)
 		//TODO delete old file?
@@ -161,7 +161,7 @@ func (l *Base16ColorschemeList) UpdateSchemes() {
 	//Get all repos from master source
 	schemeRepos := make(map[string]string)
 
-	schemesYAML, err := DownloadFileToStirng(appConf.SchemesMasterURL)
+	schemesYAML, err := DownloadFileToString(appConf.SchemesMasterURL)
 	check(err)
 
 	err = yaml.Unmarshal([]byte(schemesYAML), &schemeRepos)

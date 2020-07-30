@@ -44,7 +44,7 @@ func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
 
 	// Create local template file, if not present
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
-		templateData, err := DownloadFileToStirng(newTemplate.RawBaseURL + "templates/config.yaml")
+		templateData, err := DownloadFileToString(newTemplate.RawBaseURL + "templates/config.yaml")
 		check(err)
 		saveFile, err := os.Create(templatePath)
 		//TODO delete old file?
@@ -75,7 +75,7 @@ func (l *Base16TemplateList) UpdateTemplates() {
 	//Get all repos from master source
 	var templRepos map[string]string
 
-	templatesYAML, err := DownloadFileToStirng(appConf.TemplatesMasterURL)
+	templatesYAML, err := DownloadFileToString(appConf.TemplatesMasterURL)
 	check(err)
 
 	err = yaml.Unmarshal([]byte(templatesYAML), &templRepos)

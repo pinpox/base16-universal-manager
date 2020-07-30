@@ -112,7 +112,7 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme) error {
 	fmt.Println("[RENDER]: Rendering template \"" + templ.Name + "\"")
 
 	for k, v := range templ.Files {
-		templFileData, err := DownloadFileToStirng(templ.RawBaseURL + "templates/" + k + ".mustache")
+		templFileData, err := DownloadFileToString(templ.RawBaseURL + "templates/" + k + ".mustache")
 		if err != nil {
 			return fmt.Errorf("could not download template file: %w", err)
 		}

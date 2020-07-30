@@ -100,7 +100,7 @@ func TestBase16ColorschemeList_GetBase16Colorscheme(t *testing.T) {
 }
 
 func TestNewBase16Colorscheme(t *testing.T) {
-	data1, _ := DownloadFileToStirng("https://raw.githubusercontent.com/atelierbram/base16-atelier-schemes/master/atelier-forest.yaml")
+	data1, _ := DownloadFileToString("https://raw.githubusercontent.com/atelierbram/base16-atelier-schemes/master/atelier-forest.yaml")
 	want1 := Base16Colorscheme{
 		Name:       "Atelier Forest",
 		Author:     "Bram de Haan (http://atelierbramdehaan.nl)",
