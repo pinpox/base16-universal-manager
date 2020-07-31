@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestDownloadFileToStirng(t *testing.T) {
+func TestDownloadFileToString(t *testing.T) {
 	type args struct {
 		url string
 	}
@@ -21,13 +21,13 @@ func TestDownloadFileToStirng(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := DownloadFileToStirng(tt.args.url)
+			got, err := DownloadFileToString(tt.args.url)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("DownloadFileToStirng() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("DownloadFileToString() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got != tt.want {
-				t.Errorf("DownloadFileToStirng() = %v, want %v", got, tt.want)
+				t.Errorf("DownloadFileToString() = %v, want %v", got, tt.want)
 			}
 		})
 	}

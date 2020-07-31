@@ -27,6 +27,7 @@ func TestBase16Colorscheme_MustacheContext(t *testing.T) {
 		Color15    string
 		RepoURL    string
 		RawBaseURL string
+		FileName   string
 	}
 	tests := []struct {
 		name   string
@@ -58,8 +59,9 @@ func TestBase16Colorscheme_MustacheContext(t *testing.T) {
 				Color15:    tt.fields.Color15,
 				RepoURL:    tt.fields.RepoURL,
 				RawBaseURL: tt.fields.RawBaseURL,
+				FileName:   tt.fields.FileName,
 			}
-			if got := s.MustacheContext(); !reflect.DeepEqual(got, tt.want) {
+			if got := s.MustacheContext(".config"); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Base16Colorscheme.MustacheContext() = %v, want %v", got, tt.want)
 			}
 		})
@@ -100,7 +102,7 @@ func TestBase16ColorschemeList_GetBase16Colorscheme(t *testing.T) {
 }
 
 func TestNewBase16Colorscheme(t *testing.T) {
-	data1, _ := DownloadFileToStirng("https://raw.githubusercontent.com/atelierbram/base16-atelier-schemes/master/atelier-forest.yaml")
+	data1, _ := DownloadFileToString("https://raw.githubusercontent.com/atelierbram/base16-atelier-schemes/master/atelier-forest.yaml")
 	want1 := Base16Colorscheme{
 		Name:       "Atelier Forest",
 		Author:     "Bram de Haan (http://atelierbramdehaan.nl)",

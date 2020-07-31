@@ -18,9 +18,9 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-//DownloadFileToStirng downloads a file from a given URL and returns it's
+//DownloadFileToString downloads a file from a given URL and returns it's
 //contents as a string if successful
-func DownloadFileToStirng(url string) (string, error) {
+func DownloadFileToString(url string) (string, error) {
 
 	// fmt.Println("Downloading ", url)
 
@@ -70,8 +70,8 @@ func findYAMLinRepo(repoURL string) []GitHubFile {
 	// fmt.Println("generated api URL: ", ApiUrl)
 
 	// Get all files from repo
-	// repoFiles, err := DownloadFileToStirng("https://api.github.com/repos/atelierbram/base16-atelier-schemes/contents/")
-	repoFiles, err := DownloadFileToStirng(ApiUrl)
+	// repoFiles, err := DownloadFileToString("https://api.github.com/repos/atelierbram/base16-atelier-schemes/contents/")
+	repoFiles, err := DownloadFileToString(ApiUrl)
 	check(err)
 	keys := make([]GitHubFile, 0)
 	json.Unmarshal([]byte(repoFiles), &keys)
