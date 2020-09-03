@@ -25,6 +25,7 @@ var (
 	clearSchemesFlag   = kingpin.Flag("clear-schemes", "Delete local schemes caches").Bool()
 	configFileFlag     = kingpin.Flag("config", "Specify configuration file to use").Default(xdgDirs.QueryConfig("config.yaml")).String()
 	printConfigFlag    = kingpin.Flag("print-config", "Print current configuration").Bool()
+	schemeFlag         = kingpin.Flag("scheme", "Specify scheme to use (Overrides config)").String()
 )
 
 //Configuration
@@ -86,7 +87,14 @@ func main() {
 		templateList.UpdateTemplates()
 	}
 
-	scheme := schemeList.Find(appConf.Colorscheme)
+	var scheme Base16Colorscheme
+	if *schemeFlag == "" {
+	    // Scheme from config
+	    scheme = schemeList.Find(appConf.Colorscheme)
+	} else {
+	    // Scheme from flag
+	    scheme = schemeList.Find(*schemeFlag)
+	}
 	fmt.Println("[CONFIG]: Selected scheme: ", scheme.Name)
 
 	templateEnabled := false
