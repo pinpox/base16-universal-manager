@@ -57,7 +57,7 @@ func (s Base16Colorscheme) MustacheContext(ext string) map[string]interface{} {
 		"0E": s.Color14,
 		"0F": s.Color15,
 	}
-	slug := strings.Replace(strings.ToLower(s.FileName), " ", "-", -1) + ext
+	slug := strings.Replace(strings.ToLower(s.FileName), " ", "-", -1)
 	ret := map[string]interface{}{
 		"scheme-name":   s.Name,
 		"scheme-author": s.Author,
