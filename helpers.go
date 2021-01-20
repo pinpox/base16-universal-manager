@@ -21,16 +21,17 @@ import (
 //DownloadFileToString downloads a file from a given URL and returns it's
 //contents as a string if successful
 func DownloadFileToString(url string) (string, error) {
-
-	// fmt.Println("Downloading ", url)
-
 	var client http.Client
-	resp, err := client.Get(url + "?access_token=" + appConf.GithubToken)
+    req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
-
+    req.Header.Add("Authorization", "token " + appConf.GithubToken)
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+    defer resp.Body.Close()
 	if resp.StatusCode == http.StatusOK {
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
@@ -38,7 +39,6 @@ func DownloadFileToString(url string) (string, error) {
 		}
 		return string(bodyBytes), nil
 	}
-
 	return "", err
 }
 
