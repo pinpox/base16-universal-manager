@@ -28,9 +28,10 @@ type SetterConfig struct {
 
 // SetterAppConfig is the configuration for a particular application being themed.
 type SetterAppConfig struct {
-	Enabled bool                  `yaml:"enabled"`
-	Hook    string                `yaml:"hook"`
-	Files   map[string]FileConfig `yaml:"files"`
+	Enabled     bool                  `yaml:"enabled"`
+	Hook        string                `yaml:"hook"`
+    Template    string                `yaml:"template"`
+	Files       map[string]FileConfig `yaml:"files"`
 }
 
 // FileConfig is the configuration for how a particular file should be rendered

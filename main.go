@@ -99,8 +99,11 @@ func main() {
 
 	templateEnabled := false
 	for app, appConfig := range appConf.Applications {
+        if appConfig.Template == "" {
+            appConfig.Template = app
+        }
 		if appConfig.Enabled {
-			err := Base16Render(templateList.Find(app), scheme)
+			err := Base16Render(templateList.Find(appConfig.Template), scheme, app)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Error when rendering file: %v\n", err)
 			}
@@ -116,7 +119,7 @@ func main() {
 
 // Base16Render takes an application-specific template and renders a config file
 // implementing the provided colorscheme.
-func Base16Render(templ Base16Template, scheme Base16Colorscheme) error {
+func Base16Render(templ Base16Template, scheme Base16Colorscheme, app string) error {
 	fmt.Println("[RENDER]: Rendering template \"" + templ.Name + "\"")
 
 	for k, v := range templ.Files {
@@ -126,7 +129,7 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme) error {
 		}
 		renderedFile := mustache.Render(templFileData, scheme.MustacheContext(v.Extension))
 
-		savePath, err := getSavePath(appConf.Applications[templ.Name].Files[k].Path, k+v.Extension)
+		savePath, err := getSavePath(appConf.Applications[app].Files[k].Path, k+v.Extension)
 		if err != nil {
 			return fmt.Errorf("could not get location for save path: %w", err)
 		}
@@ -138,7 +141,7 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme) error {
 		if appConf.DryRun {
 			fmt.Println("    - (dryrun) file would be written to: ", savePath)
 		} else {
-			switch appConf.Applications[templ.Name].Files[k].Mode {
+			switch appConf.Applications[app].Files[k].Mode {
 			case "rewrite":
 				fmt.Println("     - writing: ", savePath)
 				if err = WriteFile(savePath, []byte(renderedFile)); err != nil {
@@ -146,8 +149,8 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme) error {
 				}
 			case "replace":
 				fmt.Println("     - replacing in: ", savePath)
-				startMarker := appConf.Applications[templ.Name].Files[k].StartMarker
-				endMarker := appConf.Applications[templ.Name].Files[k].EndMarker
+				startMarker := appConf.Applications[app].Files[k].StartMarker
+				endMarker := appConf.Applications[app].Files[k].EndMarker
 				if err = ReplaceMultiline(savePath, renderedFile, startMarker, endMarker); err != nil {
 					return err
 				}
@@ -156,9 +159,9 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme) error {
 	}
 
 	if appConf.DryRun {
-		fmt.Println("Not running hook, DryRun enabled: ", appConf.Applications[templ.Name].Hook)
+		fmt.Println("Not running hook, DryRun enabled: ", appConf.Applications[app].Hook)
 	} else {
-		exe_cmd(appConf.Applications[templ.Name].Hook)
+		exe_cmd(appConf.Applications[app].Hook)
 	}
 
 	return nil
