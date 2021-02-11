@@ -38,6 +38,8 @@ func DownloadFileToString(url string) (string, error) {
 			return "", err
 		}
 		return string(bodyBytes), nil
+	} else if err == nil {
+		err = fmt.Errorf("HTTP code %v", resp.StatusCode)
 	}
 	return "", err
 }
