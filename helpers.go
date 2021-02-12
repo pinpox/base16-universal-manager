@@ -81,7 +81,7 @@ func findYAMLinRepo(repoURL string) []GitHubFile {
 	// Create a list of .yaml files
 	var colorSchemes []GitHubFile
 	for _, v := range keys {
-		re := regexp.MustCompile(".*yaml")
+		re := regexp.MustCompile(".*ya?ml")
 		if re.MatchString(v.Name) {
 			colorSchemes = append(colorSchemes, v)
 		}
