@@ -89,6 +89,11 @@ go build
 
 If you get errors on missing dependencies, install them as usual with `go get`.
 
+### Shell completions
+* [fish shell](https://github.com/fish-shell/fish-shell) completions: Add the [`completions/fish/base16-universal-manager.fish`](completions/fish/base16-universal-manager.fish) to `~/.config/fish/completions/`
+
+      wget https://raw.githubusercontent.com/pinpox/base16-universal-manager/master/completions/fish/base16-universal-manager.fish -O ~/.config/fish/completions/base16-universal-manager.fish
+
 ## Usage
 
 To run, just execute the application without any command line flags. It will
