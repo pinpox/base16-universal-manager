@@ -21,6 +21,7 @@ func TestBase16Render(t *testing.T) {
 	type args struct {
 		templ  Base16Template
 		scheme Base16Colorscheme
+		app string
 	}
 	tests := []struct {
 		name string
@@ -30,7 +31,7 @@ func TestBase16Render(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Base16Render(tt.args.templ, tt.args.scheme)
+			Base16Render(tt.args.templ, tt.args.scheme, tt.args.app)
 		})
 	}
 }
