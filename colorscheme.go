@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"strconv"
 	"strings"
-	"path"
 
 	"gopkg.in/yaml.v2"
 )
@@ -35,7 +35,7 @@ type Base16Colorscheme struct {
 	RepoURL string
 
 	RawBaseURL string
-	FileName string
+	FileName   string
 }
 
 func (s Base16Colorscheme) MustacheContext(ext string) map[string]interface{} {
@@ -59,9 +59,9 @@ func (s Base16Colorscheme) MustacheContext(ext string) map[string]interface{} {
 	}
 	slug := strings.Replace(strings.ToLower(s.FileName), " ", "-", -1)
 	ret := map[string]interface{}{
-		"scheme-name":   s.Name,
-		"scheme-author": s.Author,
-		"scheme-slug": slug,
+		"scheme-name":             s.Name,
+		"scheme-author":           s.Author,
+		"scheme-slug":             slug,
 		"scheme-slug-underscored": strings.Replace(slug, "-", "_", -1),
 	}
 
@@ -107,13 +107,11 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 
 	schemePath := path.Join(appConf.SchemesCachePath, name)
 
-
 	parts := strings.Split(l.colorschemes[name], "/")
 	yamlURL := strings.Join([]string{"https://raw.githubusercontent.com", parts[3], parts[4], parts[6], parts[7]}, "/")
 	// Create local schemes file, if not present
 	if _, err := os.Stat(schemePath); os.IsNotExist(err) {
 
-		
 		fmt.Println("downloading theme from: ", yamlURL)
 
 		schemeData, err := DownloadFileToString(yamlURL)
@@ -174,13 +172,18 @@ func (l *Base16ColorschemeList) UpdateSchemes() {
 		schemeRepos[k] = v
 	}
 
+	color := strings.Split(appConf.Colorscheme, "-")[0]
+
 	for _, v1 := range schemeRepos {
-		fmt.Println("Getting schemes from: " + v1)
+		color_url := strings.Join(strings.Split(v1, "-"), " ")
+		if strings.Contains(color_url, color) {
+			fmt.Println("Getting schemes from: " + v1)
 
-		for _, v2 := range findYAMLinRepo(v1) {
-			l.colorschemes[v2.Name] = v2.HTMLURL
+			for _, v2 := range findYAMLinRepo(v1) {
+				l.colorschemes[v2.Name] = v2.HTMLURL
+			}
+
 		}
-
 	}
 
 	fmt.Println("Found colorschemes: ", len(l.colorschemes))

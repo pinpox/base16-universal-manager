@@ -5,8 +5,8 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
-	"strings"
 	"path"
+	"strings"
 )
 
 type Base16TemplateFile struct {
@@ -83,7 +83,15 @@ func (l *Base16TemplateList) UpdateTemplates() {
 
 	fmt.Println("Found template repos: ", len(templRepos))
 	for k, v := range templRepos {
-		l.templates[k] = v
+		for i := range appConf.Applications {
+			//TODO: this is messy fix this
+			if i == "neovim" {
+				i = "vim"
+			}
+			if strings.Contains(v, i) {
+				l.templates[k] = v
+			}
+		}
 	}
 
 	SaveBase16TemplateList(Base16TemplateList{l.templates})
