@@ -22,16 +22,18 @@ import (
 //contents as a string if successful
 func DownloadFileToString(url string) (string, error) {
 	var client http.Client
-    req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return "", err
 	}
-    req.Header.Add("Authorization", "token " + appConf.GithubToken)
+	if appConf.GithubToken != "" {
+		req.Header.Add("Authorization", "token "+appConf.GithubToken)
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", err
 	}
-    defer resp.Body.Close()
+	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusOK {
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
