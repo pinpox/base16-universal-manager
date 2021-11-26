@@ -140,9 +140,10 @@ consists mainly of two parts:
 | DryRun |  false | Print the rendered files to stdout instead of saving them|
 
 The provided theme names, do not have to be exact.
-The [Levenstein distance](https://en.wikipedia.org/wiki/Levenshtein_distance<Paste>)
+The [Levenstein distance](https://en.wikipedia.org/wiki/Levenshtein_distance)
 is used to calculate the best matching option. This is handy in case you only
 partly remember the name of a particular scheme, if you made a typo, or if you are just plain *lazy*.
+If the provided theme name contains a slash, the local theme file will be used. 
 
 
 
