@@ -88,20 +88,24 @@ func main() {
 	}
 
 	var scheme Base16Colorscheme
+	var schemeName string
 	if *schemeFlag == "" {
-	    // Scheme from config
-	    scheme = schemeList.Find(appConf.Colorscheme)
+		// Scheme from config
+		schemeName = appConf.Colorscheme
 	} else {
-	    // Scheme from flag
-	    scheme = schemeList.Find(*schemeFlag)
+		// Scheme from flag
+		schemeName = *schemeFlag
 	}
 	fmt.Println("[CONFIG]: Selected scheme: ", scheme.Name)
+	if schemeName == filepath.Base(schemeName) {
+		fmt.Println("Loading scheme from scheme list.")
+	}
 
 	templateEnabled := false
 	for app, appConfig := range appConf.Applications {
-        if appConfig.Template == "" {
-            appConfig.Template = app
-        }
+		if appConfig.Template == "" {
+			appConfig.Template = app
+		}
 		if appConfig.Enabled {
 			err := Base16Render(templateList.Find(appConfig.Template), scheme, app)
 			if err != nil {
