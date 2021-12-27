@@ -27,6 +27,24 @@ type Base16Template struct {
 	RawBaseURL string
 }
 
+func GetRawBaseURL(repoURL string, mainBranch string) (string, error) {
+
+	parts := strings.Split(repoURL, "/")
+	rawBaseURL := ""
+	repoName := parts[3] + "/" + parts[4]
+	switch parts[2] {
+	case "git.sr.ht":
+		rawBaseURL = "https://git.sr.ht/" + repoName + "/blob/" + mainBranch + "/"
+	case "github.com":
+		rawBaseURL = "https://raw.githubusercontent.com/" + repoName + "/" + mainBranch + "/"
+	case "gitlab.com":
+		rawBaseURL = "https://gitlab.com/" + repoName + "/-/raw/" + mainBranch + "/"
+	default:
+		return "", fmt.Errorf("git host %q for %q not supported yet", parts[2], repoName)
+	}
+	return rawBaseURL, nil
+}
+
 func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
 
 	// yamlURL := "https://raw.githubusercontent.com/" + parts[3] + "/" + parts[4] + "/master/templates/config.yaml"
@@ -36,8 +54,9 @@ func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
 
 	var newTemplate Base16Template
 	newTemplate.RepoURL = l.templates[name]
-	parts := strings.Split(l.templates[name], "/")
-	newTemplate.RawBaseURL = "https://raw.githubusercontent.com/" + parts[3] + "/" + parts[4] + "/master/"
+	rawBaseURL, err := GetRawBaseURL(l.templates[name], "master")
+	check(err)
+	newTemplate.RawBaseURL = rawBaseURL
 	newTemplate.Name = name
 
 	templatePath := path.Join(appConf.TemplatesCachePath, name+".yaml")
