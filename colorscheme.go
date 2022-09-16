@@ -136,6 +136,27 @@ func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorsc
 
 }
 
+func (l *Base16ColorschemeList) GetBase16ColorschemeFile(name string) (Base16Colorscheme, error) {
+
+	if len(name) == 0 {
+		panic("Colorscheme path was empty")
+	}
+
+	_, err := os.Stat(name)
+	// no error is tolerable for local files
+	check(err)
+
+	colorscheme, err := ioutil.ReadFile(name)
+	check(err)
+
+	scheme := NewBase16Colorscheme(string(colorscheme))
+	_, fileName := path.Split(name)
+	scheme.FileName = fileName[:len(fileName)-5]
+
+	return scheme, err
+
+}
+
 func NewBase16Colorscheme(yamlData string) Base16Colorscheme {
 	var scheme Base16Colorscheme
 
@@ -188,20 +209,28 @@ func (l *Base16ColorschemeList) UpdateSchemes() {
 }
 
 func (c *Base16ColorschemeList) Find(input string) Base16Colorscheme {
-
-	if _, err := os.Stat(appConf.SchemesListFile); os.IsNotExist(err) {
+	if strings.Contains(input, "/") {
+		// a local scheme path, not a name
+		colorschemeName := input
+		scheme, err := c.GetBase16ColorschemeFile(colorschemeName)
 		check(err)
-		fmt.Println("Colorschemes list not found, pulling new one...")
-		c.UpdateSchemes()
-	}
+		return scheme
+	} else {
+		// a name, look it up
+		if _, err := os.Stat(appConf.SchemesListFile); os.IsNotExist(err) {
+			check(err)
+			fmt.Println("Colorschemes list not found, pulling new one...")
+			c.UpdateSchemes()
+		}
 
-	if len(c.colorschemes) == 0 {
-		fmt.Println("No templates in list, pulling new one... ")
-		c.UpdateSchemes()
-	}
+		if len(c.colorschemes) == 0 {
+			fmt.Println("No templates in list, pulling new one... ")
+			c.UpdateSchemes()
+		}
 
-	colorschemeName := FindMatchInMap(c.colorschemes, input)
-	scheme, err := c.GetBase16Colorscheme(colorschemeName)
-	check(err)
-	return scheme
+		colorschemeName := FindMatchInMap(c.colorschemes, input)
+		scheme, err := c.GetBase16Colorscheme(colorschemeName)
+		check(err)
+		return scheme
+	}
 }
