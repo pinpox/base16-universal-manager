@@ -28,10 +28,10 @@ type SetterConfig struct {
 
 // SetterAppConfig is the configuration for a particular application being themed.
 type SetterAppConfig struct {
-	Enabled     bool                  `yaml:"enabled"`
-	Hook        string                `yaml:"hook"`
-    Template    string                `yaml:"template"`
-	Files       map[string]FileConfig `yaml:"files"`
+	Enabled             bool                  `yaml:"enabled"`
+	Hook                string                `yaml:"hook"`
+	Template            string                `yaml:"template"`
+	Files               map[string]FileConfig `yaml:"files"`
 	DefaultRemoteBranch string                `yaml:"remote-branch"`
 }
 
