@@ -45,7 +45,7 @@ func GetRawBaseURL(repoURL string, mainBranch string) (string, error) {
 	return rawBaseURL, nil
 }
 
-func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
+func (l *Base16TemplateList) GetBase16Template(name string, remoteBranch string) Base16Template {
 
 	// yamlURL := "https://raw.githubusercontent.com/" + parts[3] + "/" + parts[4] + "/master/templates/config.yaml"
 	if len(name) == 0 {
@@ -54,7 +54,7 @@ func (l *Base16TemplateList) GetBase16Template(name string) Base16Template {
 
 	var newTemplate Base16Template
 	newTemplate.RepoURL = l.templates[name]
-	rawBaseURL, err := GetRawBaseURL(l.templates[name], "master")
+	rawBaseURL, err := GetRawBaseURL(l.templates[name], remoteBranch)
 	check(err)
 	newTemplate.RawBaseURL = rawBaseURL
 	newTemplate.Name = name
@@ -132,5 +132,10 @@ func (c *Base16TemplateList) Find(input string) Base16Template {
 	}
 
 	templateName := FindMatchInMap(c.templates, input)
-	return c.GetBase16Template(templateName)
+	appConfig := appConf.Applications[input]
+	remoteBranch := "master"
+	if appConfig.DefaultRemoteBranch != "" {
+		remoteBranch = appConfig.DefaultRemoteBranch
+	}
+	return c.GetBase16Template(templateName, remoteBranch)
 }

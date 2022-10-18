@@ -7,17 +7,17 @@ import (
 
 func TestBase16TemplateList_GetRawBaseURL(t *testing.T) {
 	type args struct {
-		url string
+		url        string
 		mainBranch string
 	}
 	type result struct {
-		result 	string
-		error	string
+		result string
+		error  string
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    result
+		name string
+		args args
+		want result
 	}{
 		{
 			"sourcehut",
@@ -46,7 +46,7 @@ func TestBase16TemplateList_GetRawBaseURL(t *testing.T) {
 			if got != tt.want.result {
 				t.Errorf("GetRawBaseURL() result = %v, want %v", got, tt.want.result)
 			}
-			if err != nil && err.Error() != tt.want.error  {
+			if err != nil && err.Error() != tt.want.error {
 				t.Errorf("GetRawBaseURL() error = '%v', want '%v'", err, tt.want.error)
 			}
 		})
@@ -73,7 +73,7 @@ func TestBase16TemplateList_GetBase16Template(t *testing.T) {
 			l := &Base16TemplateList{
 				templates: tt.fields.templates,
 			}
-			if got := l.GetBase16Template(tt.args.name); !reflect.DeepEqual(got, tt.want) {
+			if got := l.GetBase16Template(tt.args.name, "master"); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Base16TemplateList.GetBase16Template() = %v, want %v", got, tt.want)
 			}
 		})

@@ -32,6 +32,7 @@ type SetterAppConfig struct {
 	Hook        string                `yaml:"hook"`
     Template    string                `yaml:"template"`
 	Files       map[string]FileConfig `yaml:"files"`
+	DefaultRemoteBranch string                `yaml:"remote-branch"`
 }
 
 // FileConfig is the configuration for how a particular file should be rendered
@@ -85,6 +86,7 @@ func (c SetterConfig) Show() {
 	for app, appConfig := range c.Applications {
 		fmt.Println("  App: ", app)
 		fmt.Println("    Enabled: ", appConfig.Enabled)
+		fmt.Println("    Default remote branch: ", appConfig.DefaultRemoteBranch)
 		fmt.Println("    Hook: ", appConfig.Hook)
 		for k, v := range appConfig.Files {
 			fmt.Println("      ", k, "  ", v)
