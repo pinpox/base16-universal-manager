@@ -78,7 +78,10 @@ func findYAMLinRepo(repoURL string) []GitHubFile {
 	// Get all files from repo
 	// repoFiles, err := DownloadFileToString("https://api.github.com/repos/atelierbram/base16-atelier-schemes/contents/")
 	repoFiles, err := DownloadFileToString(ApiUrl)
-	check(err)
+	if err != nil {
+		fmt.Println("Failed to get schemes from: " + repoURL + " with error '" + err.Error() + "'")
+		return nil
+	}
 	keys := make([]GitHubFile, 0)
 	json.Unmarshal([]byte(repoFiles), &keys)
 
