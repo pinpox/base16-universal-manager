@@ -18,24 +18,24 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-//DownloadFileToString downloads a file from a given URL and returns it's
-//contents as a string if successful
+// DownloadFileToString downloads a file from a given URL and returns it's
+// contents as a string if successful
 func DownloadFileToString(url string) (string, error) {
 	var client http.Client
-    req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return "", err
 	}
-    
+
 	if appConf.GithubToken != "" {
 		req.Header.Add("Authorization", "token " + appConf.GithubToken)
 	}
-	
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", err
 	}
-    defer resp.Body.Close()
+	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusOK {
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
@@ -78,7 +78,10 @@ func findYAMLinRepo(repoURL string) []GitHubFile {
 	// Get all files from repo
 	// repoFiles, err := DownloadFileToString("https://api.github.com/repos/atelierbram/base16-atelier-schemes/contents/")
 	repoFiles, err := DownloadFileToString(ApiUrl)
-	check(err)
+	if err != nil {
+		fmt.Println("Failed to get schemes from: " + repoURL + " with error '" + err.Error() + "'")
+		return nil
+	}
 	keys := make([]GitHubFile, 0)
 	json.Unmarshal([]byte(repoFiles), &keys)
 

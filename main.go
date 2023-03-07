@@ -17,7 +17,7 @@ var configFile string
 
 var xdgDirs = xdg.New("base16-universal-manager", "")
 
-//Flags
+// Flags
 var (
 	updateFlag         = kingpin.Flag("update-list", "Update the list of templates and colorschemes").Bool()
 	clearListFlag      = kingpin.Flag("clear-list", "Delete local template and colorscheme list caches").Bool()
@@ -28,7 +28,7 @@ var (
 	schemeFlag         = kingpin.Flag("scheme", "Specify scheme to use (Overrides config)").String()
 )
 
-//Configuration
+// Configuration
 var appConf SetterConfig
 
 func main() {
@@ -89,19 +89,19 @@ func main() {
 
 	var scheme Base16Colorscheme
 	if *schemeFlag == "" {
-	    // Scheme from config
-	    scheme = schemeList.Find(appConf.Colorscheme)
+		// Scheme from config
+		scheme = schemeList.Find(appConf.Colorscheme)
 	} else {
-	    // Scheme from flag
-	    scheme = schemeList.Find(*schemeFlag)
+		// Scheme from flag
+		scheme = schemeList.Find(*schemeFlag)
 	}
 	fmt.Println("[CONFIG]: Selected scheme: ", scheme.Name)
 
 	templateEnabled := false
 	for app, appConfig := range appConf.Applications {
-        if appConfig.Template == "" {
-            appConfig.Template = app
-        }
+		if appConfig.Template == "" {
+			appConfig.Template = app
+		}
 		if appConfig.Enabled {
 			err := Base16Render(templateList.Find(appConfig.Template), scheme, app)
 			if err != nil {
@@ -203,7 +203,7 @@ func getSavePath(path, defaultFilename string) (string, error) {
 	return savePath, nil
 }
 
-//TODO proper error handling
+// TODO proper error handling
 func check(e error) {
 	if e != nil {
 		panic(e)

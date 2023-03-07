@@ -34,3 +34,7 @@ out
 base16-universal-manager
 config.yaml
 testdata/output*
+
+# ---> IDEs
+# JetBrains IDEs
+.idea/
