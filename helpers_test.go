@@ -66,7 +66,11 @@ func TestLoadStringMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := LoadStringMap(tt.args.path); !reflect.DeepEqual(got, tt.want) {
+			got, err := LoadStringMap(tt.args.path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("LoadStringMap() = %v, want %v", got, tt.want)
 			}
 		})
@@ -86,7 +90,9 @@ func TestSaveStringMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SaveStringMap(tt.args.data, tt.args.path)
+			if err := SaveStringMap(tt.args.data, tt.args.path); err != nil {
+				t.Error(err)
+			}
 		})
 	}
 }
@@ -105,7 +111,11 @@ func TestFindMatchInMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := FindMatchInMap(tt.args.choices, tt.args.input); got != tt.want {
+			got, err := FindMatchInMap(tt.args.choices, tt.args.input)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got != tt.want {
 				t.Errorf("FindMatchInMap() = %v, want %v", got, tt.want)
 			}
 		})
@@ -176,8 +186,7 @@ func TestWriteFile(t *testing.T) {
 }
 
 func TestReplaceMultiline(t *testing.T) {
-	type args struct {
-	}
+	type args struct{}
 	tests := []struct {
 		name        string
 		path        string

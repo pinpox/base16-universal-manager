@@ -1,12 +1,12 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
+	"path"
 	"strconv"
 	"strings"
-	"path"
 
 	"gopkg.in/yaml.v2"
 )
@@ -35,11 +35,11 @@ type Base16Colorscheme struct {
 	RepoURL string
 
 	RawBaseURL string
-	FileName string
+	FileName   string
 }
 
-func (s Base16Colorscheme) MustacheContext(ext string) map[string]interface{} {
-	var bases = map[string]string{
+func (s Base16Colorscheme) MustacheContext(ext string) (map[string]interface{}, error) {
+	bases := map[string]string{
 		"00": s.Color00,
 		"01": s.Color01,
 		"02": s.Color02,
@@ -59,26 +59,36 @@ func (s Base16Colorscheme) MustacheContext(ext string) map[string]interface{} {
 	}
 	slug := strings.Replace(strings.ToLower(s.FileName), " ", "-", -1)
 	ret := map[string]interface{}{
-		"scheme-name":   s.Name,
-		"scheme-author": s.Author,
-		"scheme-slug": slug,
+		"scheme-name":             s.Name,
+		"scheme-author":           s.Author,
+		"scheme-slug":             slug,
 		"scheme-slug-underscored": strings.Replace(slug, "-", "_", -1),
 	}
 
 	for base, color := range bases {
 		baseKey := "base" + base
 
-		//TODO
+		if len(color) != 6 {
+			return nil, fmt.Errorf("color %q for base %s has incorrect length, must be 6 hex digits", color, base)
+		}
+
+		// TODO
 		rVal := color[:2]
 		gVal := color[2:4]
 		bVal := color[4:6]
 
 		rValf, err := strconv.ParseUint(rVal, 16, 32)
-		check(err)
+		if err != nil {
+			return nil, fmt.Errorf("bad hex red component for base %s: %q", base, rVal)
+		}
 		gValf, err := strconv.ParseUint(gVal, 16, 32)
-		check(err)
+		if err != nil {
+			return nil, fmt.Errorf("bad hex green component for base %s: %q", base, gVal)
+		}
 		bValf, err := strconv.ParseUint(bVal, 16, 32)
-		check(err)
+		if err != nil {
+			return nil, fmt.Errorf("bad hex blue component for base %s: %q", base, bVal)
+		}
 
 		ret[baseKey+"-hex"] = rVal + gVal + bVal
 
@@ -96,98 +106,103 @@ func (s Base16Colorscheme) MustacheContext(ext string) map[string]interface{} {
 
 	}
 
-	return ret
+	return ret, nil
 }
 
 func (l *Base16ColorschemeList) GetBase16Colorscheme(name string) (Base16Colorscheme, error) {
-
 	if len(name) == 0 {
-		panic("Colorscheme name was empty")
+		return Base16Colorscheme{}, errors.New("colorscheme name was empty")
 	}
 
 	schemePath := path.Join(appConf.SchemesCachePath, name)
-
 
 	parts := strings.Split(l.colorschemes[name], "/")
 	yamlURL := strings.Join([]string{"https://raw.githubusercontent.com", parts[3], parts[4], parts[6], parts[7]}, "/")
 	// Create local schemes file, if not present
 	if _, err := os.Stat(schemePath); os.IsNotExist(err) {
 
-		
 		fmt.Println("downloading theme from: ", yamlURL)
 
 		schemeData, err := DownloadFileToString(yamlURL)
-		check(err)
-		saveFile, err := os.Create(schemePath)
-		//TODO delete old file?
-		defer saveFile.Close()
-		check(err)
-		saveFile.Write([]byte(schemeData))
-		saveFile.Close()
+		if err != nil {
+			return Base16Colorscheme{}, fmt.Errorf("downloading %s: %w", yamlURL, err)
+		}
+		err = os.WriteFile(schemePath, []byte(schemeData), os.ModePerm)
+		if err != nil {
+			return Base16Colorscheme{}, fmt.Errorf("saving scheme to file: %w", err)
+		}
 	}
 
-	colorscheme, err := ioutil.ReadFile(schemePath)
-	check(err)
+	colorscheme, err := os.ReadFile(schemePath)
+	if err != nil {
+		return Base16Colorscheme{}, fmt.Errorf("reading scheme from file %s: %w", schemePath, err)
+	}
 
-	scheme := NewBase16Colorscheme(string(colorscheme))
+	scheme, err := NewBase16Colorscheme(string(colorscheme))
+	if err != nil {
+		return Base16Colorscheme{}, fmt.Errorf("creating scheme from file %s: %w", schemePath, err)
+	}
 	scheme.RawBaseURL = yamlURL
 	scheme.FileName = parts[7][:len(parts[7])-5]
 	return scheme, err
-
 }
 
 func (l *Base16ColorschemeList) GetBase16ColorschemeFile(name string) (Base16Colorscheme, error) {
-
 	if len(name) == 0 {
-		panic("Colorscheme path was empty")
+		return Base16Colorscheme{}, fmt.Errorf("colorscheme path was empty")
 	}
 
-	_, err := os.Stat(name)
-	// no error is tolerable for local files
-	check(err)
+	colorscheme, err := os.ReadFile(name)
+	if err != nil {
+		return Base16Colorscheme{}, fmt.Errorf("reading scheme from file %s: %w", name, err)
+	}
 
-	colorscheme, err := ioutil.ReadFile(name)
-	check(err)
-
-	scheme := NewBase16Colorscheme(string(colorscheme))
+	scheme, err := NewBase16Colorscheme(string(colorscheme))
+	if err != nil {
+		return Base16Colorscheme{}, fmt.Errorf("creating scheme from file %s: %w", name, err)
+	}
 	_, fileName := path.Split(name)
 	scheme.FileName = fileName[:len(fileName)-5]
 
 	return scheme, err
-
 }
 
-func NewBase16Colorscheme(yamlData string) Base16Colorscheme {
+func NewBase16Colorscheme(yamlData string) (Base16Colorscheme, error) {
 	var scheme Base16Colorscheme
 
 	err := yaml.Unmarshal([]byte(yamlData), &scheme)
-	check(err)
-	return scheme
+	if err != nil {
+		return Base16Colorscheme{}, fmt.Errorf("unmarshalling scheme from YAML: %w", err)
+	}
+	return scheme, nil
 }
 
-func LoadBase16ColorschemeList() Base16ColorschemeList {
-	colorschemes := LoadStringMap(appConf.SchemesListFile)
-	return Base16ColorschemeList{colorschemes}
+func LoadBase16ColorschemeList() (Base16ColorschemeList, error) {
+	colorschemes, err := LoadStringMap(appConf.SchemesListFile)
+	return Base16ColorschemeList{colorschemes}, err
 }
 
-func SaveBase16ColorschemeList(l Base16ColorschemeList) {
-	SaveStringMap(l.colorschemes, appConf.SchemesListFile)
+func SaveBase16ColorschemeList(l Base16ColorschemeList) error {
+	return SaveStringMap(l.colorschemes, appConf.SchemesListFile)
 }
 
 type Base16ColorschemeList struct {
 	colorschemes map[string]string
 }
 
-func (l *Base16ColorschemeList) UpdateSchemes() {
-
-	//Get all repos from master source
+func (l *Base16ColorschemeList) UpdateSchemes() error {
+	// Get all repos from master source
 	schemeRepos := make(map[string]string)
 
 	schemesYAML, err := DownloadFileToString(appConf.SchemesMasterURL)
-	check(err)
+	if err != nil {
+		return fmt.Errorf("downloading scheme from %s: %w", appConf.SchemesMasterURL, err)
+	}
 
 	err = yaml.Unmarshal([]byte(schemesYAML), &schemeRepos)
-	check(err)
+	if err != nil {
+		return fmt.Errorf("unmarshalling YAML: %w", err)
+	}
 
 	fmt.Println("Found colorscheme repos: ", len(schemeRepos))
 
@@ -205,32 +220,49 @@ func (l *Base16ColorschemeList) UpdateSchemes() {
 	}
 
 	fmt.Println("Found colorschemes: ", len(l.colorschemes))
-	SaveBase16ColorschemeList(Base16ColorschemeList{l.colorschemes})
+	if err := SaveBase16ColorschemeList(Base16ColorschemeList{l.colorschemes}); err != nil {
+		return fmt.Errorf("saving colorscheme list: %w", err)
+	}
+
+	return nil
 }
 
-func (c *Base16ColorschemeList) Find(input string) Base16Colorscheme {
+func (c *Base16ColorschemeList) Find(input string) (Base16Colorscheme, error) {
 	if strings.Contains(input, "/") {
 		// a local scheme path, not a name
 		colorschemeName := input
 		scheme, err := c.GetBase16ColorschemeFile(colorschemeName)
-		check(err)
-		return scheme
+		if err != nil {
+			return Base16Colorscheme{}, fmt.Errorf("getting colorscheme file for %s: %w", colorschemeName, err)
+		}
+		return scheme, nil
 	} else {
 		// a name, look it up
-		if _, err := os.Stat(appConf.SchemesListFile); os.IsNotExist(err) {
-			check(err)
+		_, err := os.Stat(appConf.SchemesListFile)
+		if os.IsNotExist(err) {
 			fmt.Println("Colorschemes list not found, pulling new one...")
-			c.UpdateSchemes()
+			if err := c.UpdateSchemes(); err != nil {
+				return Base16Colorscheme{}, fmt.Errorf("updating schemes: %w", err)
+			}
+		} else if err != nil {
+			return Base16Colorscheme{}, fmt.Errorf("checking for existing colorschems list: %w", err)
 		}
 
 		if len(c.colorschemes) == 0 {
 			fmt.Println("No templates in list, pulling new one... ")
-			c.UpdateSchemes()
+			if err := c.UpdateSchemes(); err != nil {
+				return Base16Colorscheme{}, fmt.Errorf("updating schemes: %w", err)
+			}
 		}
 
-		colorschemeName := FindMatchInMap(c.colorschemes, input)
+		colorschemeName, err := FindMatchInMap(c.colorschemes, input)
+		if err != nil {
+			return Base16Colorscheme{}, fmt.Errorf("finding colorscheme in list: %w", err)
+		}
 		scheme, err := c.GetBase16Colorscheme(colorschemeName)
-		check(err)
-		return scheme
+		if err != nil {
+			return Base16Colorscheme{}, fmt.Errorf("getting colorscheme %s: %w", colorschemeName, err)
+		}
+		return scheme, nil
 	}
 }

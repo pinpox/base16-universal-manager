@@ -73,7 +73,11 @@ func TestBase16TemplateList_GetBase16Template(t *testing.T) {
 			l := &Base16TemplateList{
 				templates: tt.fields.templates,
 			}
-			if got := l.GetBase16Template(tt.args.name, "master"); !reflect.DeepEqual(got, tt.want) {
+			got, err := l.GetBase16Template(tt.args.name, "master")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Base16TemplateList.GetBase16Template() = %v, want %v", got, tt.want)
 			}
 		})
@@ -109,7 +113,11 @@ func TestLoadBase16TemplateList(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := LoadBase16TemplateList(); !reflect.DeepEqual(got, tt.want) {
+			got, err := LoadBase16TemplateList()
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("LoadBase16TemplateList() = %v, want %v", got, tt.want)
 			}
 		})
@@ -128,7 +136,9 @@ func TestSaveBase16TemplateList(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SaveBase16TemplateList(tt.args.l)
+			if err := SaveBase16TemplateList(tt.args.l); err != nil {
+				t.Error(err)
+			}
 		})
 	}
 }
@@ -153,7 +163,11 @@ func TestBase16TemplateList_Find(t *testing.T) {
 			c := &Base16TemplateList{
 				templates: tt.fields.templates,
 			}
-			if got := c.Find(tt.args.input); !reflect.DeepEqual(got, tt.want) {
+			got, err := c.Find(tt.args.input)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Base16TemplateList.Find() = %v, want %v", got, tt.want)
 			}
 		})

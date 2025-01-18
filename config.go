@@ -1,16 +1,18 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"gopkg.in/yaml.v2"
 )
 
-var defaultSchemesMasterURL = "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
-var defaultTemplatesMasterURL = "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
+var (
+	defaultSchemesMasterURL   = "https://raw.githubusercontent.com/chriskempson/base16-schemes-source/master/list.yaml"
+	defaultTemplatesMasterURL = "https://raw.githubusercontent.com/chriskempson/base16-templates-source/master/list.yaml"
+)
 
 // SetterConfig is the applicaton's configuration.
 type SetterConfig struct {
@@ -44,20 +46,20 @@ type FileConfig struct {
 }
 
 // NewConfig parses the provided configuration file and returns the app configuration.
-func NewConfig(path string) SetterConfig {
+func NewConfig(path string) (SetterConfig, error) {
 	if path == "" {
-		fmt.Fprintf(os.Stderr, "no config file found\n")
-		os.Exit(1)
+		return SetterConfig{}, errors.New("no config file specified")
 	}
 
 	var conf SetterConfig
-	file, err := ioutil.ReadFile(path)
+	file, err := os.ReadFile(path)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
-		os.Exit(1)
+		return SetterConfig{}, fmt.Errorf("reading config file: %w", err)
 	}
 	err = yaml.Unmarshal(file, &conf)
-	check(err)
+	if err != nil {
+		return SetterConfig{}, fmt.Errorf("parsing YAML from config file %s: %w", path, err)
+	}
 
 	if conf.SchemesMasterURL == "" {
 		conf.SchemesMasterURL = defaultSchemesMasterURL
@@ -71,7 +73,7 @@ func NewConfig(path string) SetterConfig {
 	conf.TemplatesCachePath = filepath.Join(xdgDirs.CacheHome(), "templates")
 	conf.TemplatesListFile = filepath.Join(xdgDirs.CacheHome(), "templateslist.yaml")
 
-	return conf
+	return conf, nil
 }
 
 // Show prints the app configuration

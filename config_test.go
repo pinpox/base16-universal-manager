@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"os"
 	"reflect"
 	"testing"
@@ -20,7 +19,11 @@ func TestNewConfig(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewConfig(tt.args.path); !reflect.DeepEqual(got, tt.want) {
+			got, err := NewConfig(tt.args.path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewConfig() = %v, want %v", got, tt.want)
 			}
 		})
@@ -67,7 +70,7 @@ func TestSetterConfig_Show(t *testing.T) {
 
 func TestDefaultMasterURLs(t *testing.T) {
 	// Create a temporary, empty config file
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "base16-universal-manager-")
+	tmpFile, err := os.CreateTemp(os.TempDir(), "base16-universal-manager-")
 	if err != nil {
 		t.Fatalf("Cannot create temporary file\n")
 	}
@@ -76,7 +79,10 @@ func TestDefaultMasterURLs(t *testing.T) {
 	}
 	defer os.Remove(tmpFile.Name())
 
-	config := NewConfig(tmpFile.Name())
+	config, err := NewConfig(tmpFile.Name())
+	if err != nil {
+		t.Fatal(err)
+	}
 	if config.SchemesMasterURL == "" {
 		t.Fatalf("SchemesMasterURL should default to %s\n", defaultSchemesMasterURL)
 	}
