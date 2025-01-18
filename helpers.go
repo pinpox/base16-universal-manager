@@ -125,18 +125,30 @@ func FindMatchInMap(choices map[string]string, input string) (string, error) {
 	if len(choices) == 0 {
 		return "", errors.New("cannot select from empty choices")
 	}
-	var match string
-	distance := 1000
+	var matches []string
+	var distance int
 
 	for k := range choices {
 		tempDistance := levenshtein.ComputeDistance(input, k)
-		if tempDistance < distance {
-			match = k
+		if tempDistance < distance || len(matches) == 0 {
 			distance = tempDistance
+			matches = nil
+			matches = append(matches, k)
+		} else if tempDistance == distance {
+			matches = append(matches, k)
 		}
 	}
 
-	return match, nil
+	if len(matches) != 1 {
+		return "", fmt.Errorf(
+			"found %d matches to %q with same similarity score, consider specifying a closer match to a candidate - candidates are: %v",
+			len(matches),
+			input,
+			strings.Join(matches, ", "),
+		)
+	}
+
+	return matches[0], nil
 }
 
 func exe_cmd(cmd string) {
