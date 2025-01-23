@@ -1,12 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"gopkg.in/yaml.v2"
-	"io/ioutil"
 	"os"
 	"path"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
 type Base16TemplateFile struct {
@@ -15,11 +16,10 @@ type Base16TemplateFile struct {
 }
 
 type Base16Template struct {
-
-	//The actual template
+	// The actual template
 	Files map[string]Base16TemplateFile
 
-	//Name (of the application)
+	// Name (of the application)
 	Name string
 
 	RepoURL string
@@ -28,7 +28,6 @@ type Base16Template struct {
 }
 
 func GetRawBaseURL(repoURL string, mainBranch string) (string, error) {
-
 	parts := strings.Split(repoURL, "/")
 	rawBaseURL := ""
 	repoName := parts[3] + "/" + parts[4]
@@ -45,17 +44,18 @@ func GetRawBaseURL(repoURL string, mainBranch string) (string, error) {
 	return rawBaseURL, nil
 }
 
-func (l *Base16TemplateList) GetBase16Template(name string, remoteBranch string) Base16Template {
-
+func (l *Base16TemplateList) GetBase16Template(name string, remoteBranch string) (Base16Template, error) {
 	// yamlURL := "https://raw.githubusercontent.com/" + parts[3] + "/" + parts[4] + "/master/templates/config.yaml"
 	if len(name) == 0 {
-		panic("Template name was empty")
+		return Base16Template{}, errors.New("template name was empty")
 	}
 
 	var newTemplate Base16Template
 	newTemplate.RepoURL = l.templates[name]
 	rawBaseURL, err := GetRawBaseURL(l.templates[name], remoteBranch)
-	check(err)
+	if err != nil {
+		return Base16Template{}, fmt.Errorf("generating template URL: %w", err)
+	}
 	newTemplate.RawBaseURL = rawBaseURL
 	newTemplate.Name = name
 
@@ -63,75 +63,95 @@ func (l *Base16TemplateList) GetBase16Template(name string, remoteBranch string)
 
 	// Create local template file, if not present
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
-		templateData, err := DownloadFileToString(newTemplate.RawBaseURL + "templates/config.yaml")
-		check(err)
+		templateURL := newTemplate.RawBaseURL + "templates/config.yaml"
+		templateData, err := DownloadFileToString(templateURL)
+		if err != nil {
+			return Base16Template{}, fmt.Errorf("downloading template from %s: %w", templateURL, err)
+		}
 		saveFile, err := os.Create(templatePath)
-		//TODO delete old file?
+		// TODO delete old file?
 		defer saveFile.Close()
 		saveFile.Write([]byte(templateData))
 		saveFile.Close()
 	}
 
-	template, err := ioutil.ReadFile(templatePath)
-	check(err)
+	template, err := os.ReadFile(templatePath)
+	if err != nil {
+		return Base16Template{}, fmt.Errorf("reading template file: %w", err)
+	}
 
-	//TODO cache actual templates
+	// TODO cache actual templates
 	var files map[string]Base16TemplateFile
 
 	err = yaml.Unmarshal(template, &files)
-	check(err)
+	if err != nil {
+		return Base16Template{}, fmt.Errorf("parsing template file %q: %w", templatePath, err)
+	}
 
 	newTemplate.Files = files
-	return newTemplate
+	return newTemplate, nil
 }
 
 type Base16TemplateList struct {
 	templates map[string]string
 }
 
-func (l *Base16TemplateList) UpdateTemplates() {
-
-	//Get all repos from master source
+func (l *Base16TemplateList) UpdateTemplates() error {
+	// Get all repos from master source
 	var templRepos map[string]string
 
 	templatesYAML, err := DownloadFileToString(appConf.TemplatesMasterURL)
-	check(err)
+	if err != nil {
+		return fmt.Errorf("downloading file from %s: %w", appConf.TemplatesMasterURL, err)
+	}
 
 	err = yaml.Unmarshal([]byte(templatesYAML), &templRepos)
-	check(err)
+	if err != nil {
+		return fmt.Errorf("parsing file downloaded from %s: %w", appConf.TemplatesMasterURL, err)
+	}
 
 	fmt.Println("Found template repos: ", len(templRepos))
 	for k, v := range templRepos {
 		l.templates[k] = v
 	}
 
-	SaveBase16TemplateList(Base16TemplateList{l.templates})
+	if err := SaveBase16TemplateList(Base16TemplateList{l.templates}); err != nil {
+		return fmt.Errorf("saving template list: %w", err)
+	}
 
+	return nil
 }
 
-func LoadBase16TemplateList() Base16TemplateList {
-	colorschemes := LoadStringMap(appConf.TemplatesListFile)
-	return Base16TemplateList{colorschemes}
+func LoadBase16TemplateList() (Base16TemplateList, error) {
+	colorschemes, err := LoadStringMap(appConf.TemplatesListFile)
+	return Base16TemplateList{colorschemes}, err
 }
 
-func SaveBase16TemplateList(l Base16TemplateList) {
-	SaveStringMap(l.templates, appConf.TemplatesListFile)
+func SaveBase16TemplateList(l Base16TemplateList) error {
+	return SaveStringMap(l.templates, appConf.TemplatesListFile)
 }
 
-func (c *Base16TemplateList) Find(input string) Base16Template {
-
+func (c *Base16TemplateList) Find(input string) (Base16Template, error) {
 	if _, err := os.Stat(appConf.TemplatesListFile); os.IsNotExist(err) {
-		check(err)
 		fmt.Println("Templates list not found, pulling new one...")
-		c.UpdateTemplates()
+		if err := c.UpdateTemplates(); err != nil {
+			return Base16Template{}, fmt.Errorf("updating templates: %w", err)
+		}
+	} else if err != nil {
+		return Base16Template{}, fmt.Errorf("checking existance of template list: %w", err)
 	}
 
 	if len(c.templates) == 0 {
 		fmt.Println("No templates in list, pulling new one... ")
-		c.UpdateTemplates()
+		if err := c.UpdateTemplates(); err != nil {
+			return Base16Template{}, fmt.Errorf("updating templates: %w", err)
+		}
 	}
 
-	templateName := FindMatchInMap(c.templates, input)
+	templateName, err := FindMatchInMap(c.templates, input)
+	if err != nil {
+		return Base16Template{}, fmt.Errorf("finding template in list: %w", err)
+	}
 	appConfig := appConf.Applications[input]
 	remoteBranch := "master"
 	if appConfig.DefaultRemoteBranch != "" {

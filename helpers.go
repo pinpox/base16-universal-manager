@@ -1,12 +1,12 @@
 package main
 
 import (
-	"encoding/json"
-
 	"bufio"
 	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -28,7 +28,7 @@ func DownloadFileToString(url string) (string, error) {
 	}
 
 	if appConf.GithubToken != "" {
-		req.Header.Add("Authorization", "token " + appConf.GithubToken)
+		req.Header.Add("Authorization", "token "+appConf.GithubToken)
 	}
 
 	resp, err := client.Do(req)
@@ -37,7 +37,7 @@ func DownloadFileToString(url string) (string, error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusOK {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return "", err
 		}
@@ -70,7 +70,6 @@ type GitHubFilesCollection struct {
 }
 
 func findYAMLinRepo(repoURL string) []GitHubFile {
-
 	parts := strings.Split(repoURL, "/")
 	ApiUrl := ("https://api.github.com/repos/" + parts[3] + "/" + parts[4] + "/contents/")
 	// fmt.Println("generated api URL: ", ApiUrl)
@@ -98,57 +97,67 @@ func findYAMLinRepo(repoURL string) []GitHubFile {
 	return colorSchemes
 }
 
-func LoadStringMap(path string) map[string]string {
-
-	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0600)
-	check(err)
-	yamlFile, err := ioutil.ReadAll(f)
-	check(err)
-	data := make(map[string]string)
-	err = yaml.Unmarshal(yamlFile, data)
-	check(err)
-	return data
-}
-
-func SaveStringMap(data map[string]string, path string) {
-
-	yamlData, err := yaml.Marshal(data)
-	check(err)
-	saveFile, err := os.Create(path)
-	defer saveFile.Close()
-	saveFile.Write(yamlData)
-	saveFile.Close()
-	fmt.Println("wrote to: ", saveFile.Name())
-}
-
-func FindMatchInMap(choices map[string]string, input string) string {
-
-	if len(choices) == 0 {
-		panic("cannot select from empty choices")
-
+func LoadStringMap(path string) (map[string]string, error) {
+	yamlFile, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("reading from file %s: %w", path, err)
 	}
-	var match string
-	distance := 1000
+	data := make(map[string]string)
+	if err := yaml.Unmarshal(yamlFile, data); err != nil {
+		return nil, fmt.Errorf("parsing YAML from file %s: %w", path, err)
+	}
+	return data, nil
+}
+
+func SaveStringMap(data map[string]string, path string) error {
+	yamlData, err := yaml.Marshal(data)
+	if err != nil {
+		return fmt.Errorf("marshaling to YAML: %w", err)
+	}
+	if err := os.WriteFile(path, yamlData, os.ModePerm); err != nil {
+		return fmt.Errorf("writing YAML: %w", err)
+	}
+	fmt.Println("wrote to: ", path)
+	return nil
+}
+
+func FindMatchInMap(choices map[string]string, input string) (string, error) {
+	if len(choices) == 0 {
+		return "", errors.New("cannot select from empty choices")
+	}
+	var matches []string
+	var distance int
 
 	for k := range choices {
 		tempDistance := levenshtein.ComputeDistance(input, k)
-		if tempDistance < distance {
-			match = k
+		if tempDistance < distance || len(matches) == 0 {
 			distance = tempDistance
+			matches = nil
+			matches = append(matches, k)
+		} else if tempDistance == distance {
+			matches = append(matches, k)
 		}
 	}
 
-	return match
+	if len(matches) != 1 {
+		return "", fmt.Errorf(
+			"found %d matches to %q with same similarity score, consider specifying a closer match to a candidate - candidates are: %v",
+			len(matches),
+			input,
+			strings.Join(matches, ", "),
+		)
+	}
+
+	return matches[0], nil
 }
 
 func exe_cmd(cmd string) {
-
 	if len(cmd) == 0 {
 		return
 	}
 	parts := strings.Fields(cmd)
 	head := parts[0]
-	parts = parts[1:len(parts)]
+	parts = parts[1:]
 
 	out, err := exec.Command(head, parts...).Output()
 

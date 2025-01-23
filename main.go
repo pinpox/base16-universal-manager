@@ -32,11 +32,21 @@ var (
 var appConf SetterConfig
 
 func main() {
-	//Parse Flags
+	if err := run(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+	}
+}
+
+func run() error {
+	// Parse Flags
 	kingpin.Version("1.0.0")
 	kingpin.Parse()
 
-	appConf = NewConfig(*configFileFlag)
+	var err error
+	appConf, err = NewConfig(*configFileFlag)
+	if err != nil {
+		return err
+	}
 
 	if *printConfigFlag {
 		appConf.Show()
@@ -79,21 +89,37 @@ func main() {
 	os.MkdirAll(appConf.SchemesCachePath, os.ModePerm)
 	os.MkdirAll(appConf.TemplatesCachePath, os.ModePerm)
 
-	schemeList := LoadBase16ColorschemeList()
-	templateList := LoadBase16TemplateList()
+	schemeList, err := LoadBase16ColorschemeList()
+	if err != nil {
+		return fmt.Errorf("loading colorscheme list: %w", err)
+	}
+	templateList, err := LoadBase16TemplateList()
+	if err != nil {
+		return fmt.Errorf("loading template list: %w", err)
+	}
 
 	if *updateFlag {
-		schemeList.UpdateSchemes()
-		templateList.UpdateTemplates()
+		if err := schemeList.UpdateSchemes(); err != nil {
+			return fmt.Errorf("updating schemes: %w", err)
+		}
+		if err := templateList.UpdateTemplates(); err != nil {
+			return fmt.Errorf("updating templates: %w", err)
+		}
 	}
 
 	var scheme Base16Colorscheme
 	if *schemeFlag == "" {
 		// Scheme from config
-		scheme = schemeList.Find(appConf.Colorscheme)
+		scheme, err = schemeList.Find(appConf.Colorscheme)
+		if err != nil {
+			return fmt.Errorf("finding scheme %s from configuration: %w", appConf.Colorscheme, err)
+		}
 	} else {
 		// Scheme from flag
-		scheme = schemeList.Find(*schemeFlag)
+		scheme, err = schemeList.Find(*schemeFlag)
+		if err != nil {
+			return fmt.Errorf("finding scheme %s from flag: %w", *schemeFlag, err)
+		}
 	}
 	fmt.Println("[CONFIG]: Selected scheme: ", scheme.Name)
 
@@ -103,9 +129,13 @@ func main() {
 			appConfig.Template = app
 		}
 		if appConfig.Enabled {
-			err := Base16Render(templateList.Find(appConfig.Template), scheme, app)
+			tmpl, err := templateList.Find(appConfig.Template)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error when rendering file: %v\n", err)
+				return fmt.Errorf("finding template %s: %w", appConfig.Template, err)
+			}
+			err = Base16Render(tmpl, scheme, app)
+			if err != nil {
+				return fmt.Errorf("rendering file: %v", err)
 			}
 			templateEnabled = true
 		}
@@ -115,6 +145,7 @@ func main() {
 		fmt.Println("No templates enabled")
 	}
 
+	return nil
 }
 
 // Base16Render takes an application-specific template and renders a config file
@@ -127,7 +158,11 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme, app string) er
 		if err != nil {
 			return fmt.Errorf("could not download template file: %w", err)
 		}
-		renderedFile := mustache.Render(templFileData, scheme.MustacheContext(v.Extension))
+		templContext, err := scheme.MustacheContext(v.Extension)
+		if err != nil {
+			return fmt.Errorf("generating template context: %w", err)
+		}
+		renderedFile := mustache.Render(templFileData, templContext)
 
 		savePath, err := getSavePath(appConf.Applications[app].Files[k].Path, k+v.Extension)
 		if err != nil {
@@ -137,7 +172,7 @@ func Base16Render(templ Base16Template, scheme Base16Colorscheme, app string) er
 			continue
 		}
 
-		//If DryRun is enabled, just print the output location for debugging
+		// If DryRun is enabled, just print the output location for debugging
 		if appConf.DryRun {
 			fmt.Println("    - (dryrun) file would be written to: ", savePath)
 		} else {
@@ -201,11 +236,4 @@ func getSavePath(path, defaultFilename string) (string, error) {
 	}
 
 	return savePath, nil
-}
-
-// TODO proper error handling
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
 }

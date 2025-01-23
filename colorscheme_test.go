@@ -61,7 +61,11 @@ func TestBase16Colorscheme_MustacheContext(t *testing.T) {
 				RawBaseURL: tt.fields.RawBaseURL,
 				FileName:   tt.fields.FileName,
 			}
-			if got := s.MustacheContext(".config"); !reflect.DeepEqual(got, tt.want) {
+			got, err := s.MustacheContext(".config")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Base16Colorscheme.MustacheContext() = %v, want %v", got, tt.want)
 			}
 		})
@@ -152,7 +156,11 @@ base0F: "c33ff3"`
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewBase16Colorscheme(tt.yamlData); !reflect.DeepEqual(got, tt.want) {
+			got, err := NewBase16Colorscheme(tt.yamlData)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewBase16Colorscheme() = %v, want %v", got, tt.want)
 			}
 		})
@@ -168,7 +176,11 @@ func TestLoadBase16ColorschemeList(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := LoadBase16ColorschemeList(); !reflect.DeepEqual(got, tt.want) {
+			got, err := LoadBase16ColorschemeList()
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("LoadBase16ColorschemeList() = %v, want %v", got, tt.want)
 			}
 		})
@@ -187,7 +199,9 @@ func TestSaveBase16ColorschemeList(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SaveBase16ColorschemeList(tt.args.l)
+			if err := SaveBase16ColorschemeList(tt.args.l); err != nil {
+				t.Error(err)
+			}
 		})
 	}
 }
@@ -207,7 +221,9 @@ func TestBase16ColorschemeList_UpdateSchemes(t *testing.T) {
 			l := &Base16ColorschemeList{
 				colorschemes: tt.fields.colorschemes,
 			}
-			l.UpdateSchemes()
+			if err := l.UpdateSchemes(); err != nil {
+				t.Error(err)
+			}
 		})
 	}
 }
@@ -232,7 +248,11 @@ func TestBase16ColorschemeList_Find(t *testing.T) {
 			c := &Base16ColorschemeList{
 				colorschemes: tt.fields.colorschemes,
 			}
-			if got := c.Find(tt.args.input); !reflect.DeepEqual(got, tt.want) {
+			got, err := c.Find(tt.args.input)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Base16ColorschemeList.Find() = %v, want %v", got, tt.want)
 			}
 		})
