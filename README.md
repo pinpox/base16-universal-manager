@@ -70,11 +70,14 @@ will never use.
 
 
 ## Installation
+I might provide packages for multiple linux distributions and pre-build
+binaries in the future.
 
-At the moment, you can only build and install this with go. You can install it
-directly or build it from source. I might provide packages for multiple linux
-distributions and pre-build binaries in the future.
-
+### Homebrew
+```
+brew tap awanwar/base16-universal-manager
+brew install --HEAD base16-universal-manager
+```
 ### Install directly
 ```
 mkdir -p "$(go env GOPATH)/src"
